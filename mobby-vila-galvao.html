@@ -1,0 +1,1193 @@
+<title>Mobby Vila Galvão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e15; --glass:rgba(14,19,29,.66); --glass2:rgba(255,255,255,.035); --glass3:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.16);
+  --text:#e8edf4; --muted:#93a0b5; --dim:#647086;
+  --accent:#f2a273; --accent-d:#b4643f; --info:#7cc4ff;
+  --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --pend:#fb923c; --idle:#94a3b8;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:radial-gradient(1200px 700px at 15% -20%,#1b2638 0%,var(--bg) 60%);color:var(--text);
+  font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;flex-direction:column;overflow:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:10px;border:2px solid transparent;background-clip:padding-box}
+
+/* ---------- TOP BAR ---------- */
+.topbar{display:flex;align-items:center;gap:14px;padding:10px 16px;border-bottom:1px solid var(--line);
+  background:rgba(9,13,20,.86);backdrop-filter:blur(14px);z-index:30;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:11px;min-width:250px}
+.logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,#f6b48b,#b4643f);display:grid;place-items:center;
+  box-shadow:0 6px 20px -6px rgba(242,162,115,.6)}
+.logo svg{width:22px;height:22px}
+.brand h1{font-size:15px;margin:0;font-weight:700;letter-spacing:-.01em}
+.brand h1 span{color:var(--muted);font-weight:500}
+.brand p{margin:1px 0 0;color:var(--dim);font-size:11.5px}
+.kpis{display:flex;gap:10px;flex:1;min-width:0}
+.kpi{flex:1;min-width:128px;padding:7px 12px;border:1px solid var(--line);border-radius:12px;background:var(--glass2);
+  text-align:left;transition:background .15s,border-color .15s}
+.kpi:hover{border-color:var(--line2);background:var(--glass3)}
+.kpi .k{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:6px;font-weight:600}
+.kpi .k i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.kpi .v{font-size:19px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:1px}
+.kpi .s{font-size:11.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search{position:relative;width:310px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--dim)}
+.search input{width:100%;padding:10px 12px 10px 36px;border-radius:11px;border:1px solid var(--line2);background:rgba(255,255,255,.05);outline:none}
+.search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(242,162,115,.18)}
+.results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:rgba(15,20,30,.97);border:1px solid var(--line2);border-radius:12px;
+  padding:5px;display:none;max-height:360px;overflow:auto;box-shadow:0 20px 50px -10px rgba(0,0,0,.6);z-index:40}
+.results.open{display:block}
+.res{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer}
+.res:hover,.res.act{background:rgba(255,255,255,.07)}
+.res b{min-width:56px;font-variant-numeric:tabular-nums}
+.res .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res .n small{color:var(--dim);display:block;font-size:11.5px}
+.dot{width:8px;height:8px;border-radius:50%;flex:none;display:inline-block}
+
+/* ---------- SPLIT ---------- */
+main.split{flex:1;display:grid;grid-template-columns:65% 35%;min-height:0}
+.viewport{position:relative;min-height:0;overflow:hidden;background:#cfdbe6}
+.viewport canvas{display:block}
+.panel{border-left:1px solid var(--line);background:linear-gradient(180deg,rgba(20,27,41,.9),rgba(11,15,23,.96));overflow:auto;min-height:0;position:relative}
+
+/* overlays */
+.ov{position:absolute;z-index:6;background:rgba(11,16,25,.66);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:12px;box-shadow:0 10px 30px -12px rgba(0,0,0,.5)}
+.toolbar{top:14px;left:14px;display:flex;gap:8px;background:none;border:0;box-shadow:none;backdrop-filter:none;flex-wrap:wrap;right:70px}
+.seg{display:flex;padding:4px;gap:2px;background:rgba(11,16,25,.7);border:1px solid rgba(255,255,255,.1);border-radius:12px;backdrop-filter:blur(14px)}
+.seg button{border:0;background:none;padding:7px 12px;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:rgba(255,255,255,.12);color:#fff}
+.seg button svg{width:15px;height:15px}
+.dd{position:relative}
+.dd-menu{position:absolute;top:calc(100% + 6px);left:0;min-width:240px;padding:6px;display:none;background:rgba(13,18,28,.95);border:1px solid var(--line2);border-radius:12px;box-shadow:0 20px 50px -10px rgba(0,0,0,.6)}
+.dd.open .dd-menu{display:block}
+.dd-menu button{display:flex;width:100%;align-items:center;gap:10px;padding:9px 10px;border:0;background:none;border-radius:8px;text-align:left;font-size:13px}
+.dd-menu button:hover{background:rgba(255,255,255,.07)}
+.dd-menu small{color:var(--dim);margin-left:auto;font-size:11px;padding-left:12px}
+.dd-menu button{white-space:nowrap}
+.dd-menu{min-width:300px}
+.legend{left:14px;bottom:14px;padding:10px 12px;font-size:12px;min-width:200px}
+.legend h4{margin:0 0 6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.legend .row{display:flex;align-items:center;gap:8px;padding:2px 0}
+.legend .row span:last-child{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums;padding-left:12px}
+.floors{right:14px;top:50%;transform:translateY(-50%);padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;width:54px}
+.floors .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.floors .val{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;text-align:center;line-height:1.1}
+.floors input{writing-mode:vertical-lr;direction:rtl;height:220px;width:22px;accent-color:var(--accent);cursor:pointer}
+.floors button{width:30px;height:26px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.05);display:grid;place-items:center}
+.floors button:hover{background:rgba(255,255,255,.12)}
+.camctl{right:14px;bottom:14px;display:flex;padding:4px;gap:2px}
+.camctl button{border:0;background:none;width:34px;height:32px;border-radius:8px;display:grid;place-items:center;color:var(--muted)}
+.camctl button:hover{color:#fff;background:rgba(255,255,255,.08)}
+.camctl button.on{color:var(--accent);background:rgba(242,162,115,.14)}
+.camctl svg{width:17px;height:17px}
+.tip{position:absolute;z-index:7;pointer-events:none;padding:7px 10px;font-size:12.5px;border-radius:9px;background:rgba(10,14,22,.9);border:1px solid var(--line2);
+  white-space:nowrap;transform:translate(14px,14px);display:none}
+.tip b{font-size:13px}.tip small{color:var(--muted);display:block}
+.hint{position:absolute;left:50%;top:66px;transform:translateX(-50%);z-index:5;font-size:12px;color:#1c2633;background:rgba(255,255,255,.72);padding:6px 12px;border-radius:20px;backdrop-filter:blur(8px);transition:opacity .6s;pointer-events:none;white-space:nowrap}
+.pin{pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:6px;padding:4px 9px 4px 5px;border-radius:20px;background:rgba(11,16,25,.78);
+  border:1px solid rgba(255,255,255,.18);color:#fff;font:600 11.5px Inter,system-ui,sans-serif;white-space:nowrap;transform:translateY(-14px);transition:background .15s}
+.pin:hover{background:rgba(242,162,115,.92);color:#1a0f08}
+.pin i{width:16px;height:16px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-style:normal;font-size:9px;color:#1a0f08}
+.pin.street{background:rgba(255,255,255,.85);color:#222;border-color:transparent;pointer-events:none;font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:10.5px;padding:4px 10px}
+.loading{position:absolute;inset:0;display:grid;place-items:center;z-index:9;background:#0d131d;color:var(--muted);font-size:13px;transition:opacity .5s}
+.loading .sp{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.1);border-top-color:var(--accent);animation:spin 1s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- PANEL ---------- */
+.p-head{padding:18px 20px 14px;border-bottom:1px solid var(--line);position:relative}
+.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.p-head h2{margin:2px 0 8px;font-size:26px;letter-spacing:-.03em;font-weight:700}
+.p-head h2 small{font-size:14px;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:11.5px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cfd7e3}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;margin-top:10px;
+  background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.x{position:absolute;right:14px;top:14px;width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.04);display:grid;place-items:center;color:var(--muted)}
+.x:hover{color:#fff;background:rgba(255,255,255,.1)}
+.navu{position:absolute;right:52px;top:14px;display:flex;gap:4px}
+.navu button{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--muted);display:grid;place-items:center}
+.navu button:hover{color:#fff;background:rgba(255,255,255,.1)}
+.tabs{display:flex;gap:2px;padding:8px 12px 0;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(17,23,35,.96);backdrop-filter:blur(10px);z-index:3;overflow-x:auto}
+.tabs button{border:0;background:none;padding:9px 8px 11px;font-size:12px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.tabs button:hover{color:var(--text)}
+.tabs button.on{color:#fff;border-color:var(--accent)}
+.tabs .cnt{font-size:10.5px;background:rgba(255,255,255,.1);padding:0 6px;border-radius:10px;font-weight:600}
+.tabs .cnt.hot{background:rgba(248,113,113,.2);color:var(--bad)}
+.body{padding:16px 20px 28px;display:flex;flex-direction:column;gap:14px}
+.card{border:1px solid var(--line);background:var(--glass2);border-radius:14px;padding:14px}
+.card h3{margin:0 0 10px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:8px}
+.card h3 .r{margin-left:auto;text-transform:none;letter-spacing:0;font-weight:500;color:var(--dim)}
+.person{display:flex;gap:12px;align-items:flex-start}
+.av{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:14px;flex:none;color:#10151f}
+.person .nm{font-weight:600;font-size:14.5px}
+.person .meta{color:var(--muted);font-size:12.5px;display:flex;flex-direction:column;gap:1px;margin-top:2px}
+.person .meta a{color:var(--muted);text-decoration:none}.person .meta a:hover{color:var(--info)}
+.tag{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.07);color:#cdd5e1;white-space:nowrap}
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.li:first-child{border-top:0;padding-top:0}
+.li:last-child{padding-bottom:0}
+.li .grow{flex:1;min-width:0}
+.li .sub{color:var(--dim);font-size:12px}
+.li.clk{cursor:pointer;border-radius:8px}
+.li.clk:hover .grow b{color:var(--accent)}
+.num{font-variant-numeric:tabular-nums}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat .k{font-size:11px;color:var(--muted)}
+.stat .v{font-size:18px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.plate{display:inline-flex;flex-direction:column;align-items:center;border-radius:6px;overflow:hidden;border:2px solid #1d2a3a;background:#fff;color:#111;min-width:118px}
+.plate span{background:#1a46a8;color:#fff;font-size:8px;font-weight:700;letter-spacing:.14em;width:100%;text-align:center;padding:1px 0}
+.plate b{font:700 19px/1.25 "Courier New",monospace;letter-spacing:.08em;padding:1px 8px}
+.big{font-size:28px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);font-weight:600;text-align:left;padding:0 0 7px}
+td{padding:7px 0;border-top:1px solid var(--line)}
+td.r,th.r{text-align:right}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:color-mix(in srgb,var(--c) 15%,transparent);color:var(--c);white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:9px 14px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.06);font-weight:600;font-size:13px}
+.btn:hover{background:rgba(255,255,255,.12)}
+.btn.pri{background:linear-gradient(135deg,#f6b48b,#e08a5b);border-color:transparent;color:#1a0f08}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.sm{padding:5px 10px;font-size:12px;border-radius:8px}
+.btn svg{width:15px;height:15px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);flex:1;min-width:120px}
+.fld input,.fld select,.fld textarea{padding:8px 10px;border-radius:9px;border:1px solid var(--line2);background:rgba(0,0,0,.25);color:var(--text);outline:none;font-size:13px}
+.fld textarea{min-height:72px;resize:vertical}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--accent)}
+.chk{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--text)}
+.chk input{accent-color:var(--accent)}
+.ticket{border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(255,255,255,.025)}
+.ticket .t1{display:flex;gap:8px;align-items:flex-start}
+.ticket .t1 b{flex:1;font-size:13.5px}
+.ticket .meta{font-size:11.5px;color:var(--dim);margin:3px 0 6px}
+.ticket p{margin:0 0 8px;font-size:12.5px;color:#c3ccd9}
+.notes{border-left:2px solid var(--line2);margin-left:4px;padding-left:12px;display:flex;flex-direction:column;gap:7px}
+.note{font-size:12.5px;position:relative}
+.note::before{content:"";position:absolute;left:-17px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--dim);border:2px solid #141a26}
+.note.sind::before{background:var(--accent)}
+.note small{color:var(--dim);display:block;font-size:11px}
+.chart{width:100%;height:auto;display:block}
+.chart text{font:600 9.5px Inter,system-ui,sans-serif;fill:#9aa6b8;text-anchor:middle}
+.chart text.cl{fill:#6b778b;font-weight:500}
+.chart .avg{stroke:#e8edf4;stroke-dasharray:4 4;stroke-width:1;opacity:.55}
+.chart .axis{stroke:rgba(255,255,255,.12)}
+.chart text.at{text-anchor:start;fill:#e8edf4;paint-order:stroke;stroke:#141b28;stroke-width:3px}
+.stack{display:flex;height:10px;border-radius:6px;overflow:hidden;gap:2px;margin:4px 0 10px}
+.muted{color:var(--muted)}.dim{color:var(--dim)}
+.empty{color:var(--dim);font-size:12.5px;padding:4px 0}
+.alert{display:flex;gap:10px;padding:10px 12px;border-radius:10px;font-size:12.5px;background:color-mix(in srgb,var(--c) 12%,transparent);border:1px solid color-mix(in srgb,var(--c) 28%,transparent)}
+.alert b{color:var(--c)}
+.linkbtn{background:none;border:0;color:var(--dim);font-size:12px;text-decoration:underline;padding:0}
+.linkbtn:hover{color:var(--text)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;z-index:100;background:#f1f5f9;color:#0f172a;padding:10px 16px;border-radius:12px;font-weight:600;font-size:13px;box-shadow:0 16px 40px -10px rgba(0,0,0,.5);transition:.25s;pointer-events:none;display:flex;gap:8px;align-items:center;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast i{width:18px;height:18px;border-radius:50%;background:#10b981;display:grid;place-items:center;color:#fff;font-style:normal;font-size:11px}
+
+@media (max-width:1280px){ .kpis{order:3;flex-basis:100%} .search{margin-left:auto} }
+@media (max-width:900px){
+  body{overflow:auto;height:auto;min-height:100%}
+  main.split{grid-template-columns:1fr}
+  .viewport{height:60vh;min-height:380px}
+  .panel{border-left:0;border-top:1px solid var(--line);overflow:visible}
+  .kpis{flex-wrap:wrap}.kpi{min-width:calc(50% - 5px)}
+  .search{width:100%;margin:0}
+  .legend,.hint{display:none}
+  .floors input{height:140px}
+  .seg button span{display:none}
+  .tabs{position:static}
+}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}
+</script>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#1a0f08" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 21V5l6-2 6 2v16"/><path d="M3 21h18M10 8h1M13 8h1M10 12h1M13 12h1M10 16h1M13 16h1"/></svg></div>
+    <div>
+      <h1>Mobby Vila Galvão <span>· Gestão do Síndico</span></h1>
+      <p>Av. São Bento, 1689 · Vila Galvão · Guarulhos – SP</p>
+    </div>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Buscar apto (ex.: 84) ou morador…" autocomplete="off" aria-label="Buscar unidade ou morador">
+    <div class="results" id="results"></div>
+  </div>
+</header>
+
+<main class="split">
+  <section class="viewport" id="viewport">
+    <div class="loading" id="loading"><div><div class="sp"></div>Carregando gêmeo digital…</div></div>
+
+    <div class="ov toolbar">
+      <div class="seg" id="modes">
+        <button data-mode="real" class="on" title="Visão Realista"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>Visão Realista</span></button>
+        <button data-mode="fin" title="Mapa de Inadimplência"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><span>Mapa de Inadimplência</span></button>
+        <button data-mode="manut" title="Alertas de Manutenção"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><span>Alertas de Manutenção</span></button>
+      </div>
+      <div class="dd" id="areasDD">
+        <div class="seg"><button id="areasBtn" class="on" style="background:rgba(242,162,115,.16);color:#f6c3a3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10l7-5 7 5v11"/><path d="M9 21v-6h6v6"/></svg><span>Áreas Comuns</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button></div>
+        <div class="dd-menu" id="areasMenu"></div>
+      </div>
+    </div>
+
+    <div class="ov legend" id="legend"></div>
+
+    <div class="ov floors">
+      <span class="lbl">Andar</span>
+      <button id="fUp" title="Subir um andar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 15 6-6 6 6"/></svg></button>
+      <input type="range" id="floor" min="0" max="15" step="1" value="8" aria-label="Navegar pelos andares">
+      <button id="fDn" title="Descer um andar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+      <span class="val" id="floorVal">8º</span>
+    </div>
+
+    <div class="ov camctl">
+      <button id="camFront" title="Fachada (Av. São Bento)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="6" y="3" width="12" height="18" rx="1"/><path d="M10 7h4M10 11h4M10 15h4"/></svg></button>
+      <button id="camBack" title="Fundos (lazer)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 18c2 0 2-1.5 4-1.5S8 18 10 18s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/><path d="M7 14V5a2 2 0 0 1 4 0M13 14V5a2 2 0 0 1 4 0M7 9h6"/></svg></button>
+      <button id="camRot" title="Rotação automática"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
+      <button id="camReset" title="Visão geral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h3M18 12h3M12 3v3M12 18v3"/><circle cx="12" cy="12" r="4"/></svg></button>
+    </div>
+    <div class="tip" id="tip"></div>
+    <div class="hint" id="hint">Arraste para girar · role para zoom · clique em uma varanda para abrir a unidade</div>
+  </section>
+
+  <aside class="panel" id="panel"></aside>
+</main>
+<div class="toast" id="toast"><i>✓</i><span></span></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+/* =========================================================
+   UTILITÁRIOS
+   ========================================================= */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const money = v => BRL.format(v);
+const MES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const pad = (n, l = 2) => String(n).padStart(l, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseISO = s => { const [y,m,d] = s.slice(0,10).split('-').map(Number); return new Date(y, m-1, d); };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const TODAY = (() => { const d = new Date(); d.setHours(0,0,0,0); return d; })();
+const TODAY_ISO = iso(TODAY);
+const fmtD = s => parseISO(s).toLocaleDateString('pt-BR');
+const fmtDT = s => { const d = new Date(s); return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}); };
+const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const r2 = v => Math.round(v * 100) / 100;
+const initials = n => n.split(' ').filter(Boolean).slice(0, 2).map(p => p[0]).join('').toUpperCase();
+const AVC = ['#f2a273','#7cc4ff','#a7f3d0','#fcd34d','#c4b5fd','#f9a8d4','#93c5fd','#fdba74'];
+const avColor = n => AVC[[...n].reduce((a, c) => a + c.charCodeAt(0), 0) % AVC.length];
+
+function mulberry(seed) {
+  return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+
+/* =========================================================
+   DADOS FICTÍCIOS (determinísticos)
+   ========================================================= */
+const FLOORS = 15, PER_FLOOR = 8;
+const FN_F = ['Ana','Beatriz','Camila','Daniela','Fernanda','Gabriela','Helena','Isabela','Juliana','Larissa','Mariana','Natália','Patrícia','Renata','Sofia','Tatiane','Vanessa','Aline','Bruna','Carolina','Débora','Elaine','Flávia','Giovana','Jéssica','Luana','Priscila','Raquel','Simone','Viviane','Letícia','Marina'];
+const FN_M = ['André','Bruno','Carlos','Diego','Eduardo','Felipe','Gustavo','Henrique','Igor','João','Lucas','Marcelo','Nicolas','Otávio','Paulo','Rafael','Rodrigo','Thiago','Vinícius','Wagner','Alexandre','Caio','Daniel','Fábio','Gabriel','Leandro','Mateus','Renan','Sérgio','Victor','Ricardo','Murilo'];
+const LN = ['Silva','Santos','Oliveira','Souza','Rodrigues','Ferreira','Alves','Pereira','Lima','Gomes','Costa','Ribeiro','Martins','Carvalho','Almeida','Lopes','Soares','Fernandes','Vieira','Barbosa','Rocha','Dias','Nascimento','Andrade','Moreira','Nunes','Marques','Machado','Mendes','Freitas','Cardoso','Ramos','Teixeira','Araújo','Correia','Campos','Batista','Moura','Siqueira','Tavares','Prado','Galvão'];
+const DOMAINS = ['gmail.com','outlook.com','hotmail.com','uol.com.br','yahoo.com.br','icloud.com'];
+const DOGS = ['Thor','Mel','Luna','Bob','Pipoca','Nina','Fred','Paçoca','Amora','Simba','Belinha','Zeca','Lola','Max','Cookie','Bento','Kiara','Toddy'];
+const CATS = ['Mia','Frajola','Salem','Nala','Tom','Chica','Oliver','Lua'];
+const DOG_BREEDS = [['Shih-tzu','Pequeno'],['Golden Retriever','Grande'],['Spitz Alemão','Pequeno'],['Lhasa Apso','Pequeno'],['SRD','Médio'],['Yorkshire','Pequeno'],['Bulldog Francês','Pequeno'],['Poodle','Pequeno'],['Dachshund','Pequeno'],['Border Collie','Médio'],['Labrador','Grande']];
+const CAT_BREEDS = ['SRD','Siamês','Persa','Maine Coon'];
+const CARS = ['Hyundai HB20','Chevrolet Onix','Fiat Argo','VW Polo','Toyota Corolla','Honda Civic','Jeep Renegade','VW T-Cross','Fiat Mobi','Renault Kwid','Nissan Kicks','Toyota Yaris','Honda HR-V','Fiat Pulse','BYD Dolphin','Chevrolet Tracker','Fiat Strada'];
+const COLORS_CAR = ['Prata','Branco','Preto','Cinza','Vermelho','Azul'];
+const MANUT_CATS = ['Reforma','Envidraçamento de sacada','Vazamento','Infiltração','Elétrica'];
+const TICKET_TPL = {
+  'Envidraçamento de sacada': [
+    ['Instalação de envidraçamento do terraço grill', 'Solicitação de instalação conforme padrão aprovado em assembleia (vidro incolor 8 mm, perfil branco). Aguardando agendamento da empresa instaladora.', 'Média'],
+    ['Envidraçamento instalado fora do padrão', 'Vistoria identificou perfil na cor preta, divergente do padrão da fachada. Morador notificado para adequação.', 'Média']],
+  'Reforma': [
+    ['Reforma de cozinha e troca de revestimento', 'ART/RRT apresentada. Obra autorizada de segunda a sexta, das 8h às 17h. Entulho deve sair em sacos pela escada de serviço.', 'Média'],
+    ['Troca de piso da sala e dormitórios', 'Reforma com uso de serra e martelete. Vizinhos dos andares adjacentes foram avisados.', 'Baixa']],
+  'Vazamento': [
+    ['Vazamento no teto do banheiro social', 'Mancha de umidade vinda da unidade superior. Encanador agendado para vistoria com geofone.', 'Alta'],
+    ['Vazamento no registro da área de serviço', 'Gotejamento constante no registro geral da unidade. Necessário fechar a coluna para reparo.', 'Alta']],
+  'Infiltração': [
+    ['Infiltração na parede do terraço grill', 'Possível falha na impermeabilização da floreira. Construtora acionada dentro do prazo de garantia.', 'Média']],
+  'Elétrica': [
+    ['Disjuntor do chuveiro desarmando', 'Morador relata queda do disjuntor ao ligar o chuveiro. Eletricista do condomínio fará medição no quadro.', 'Alta']],
+  'Ruído': [
+    ['Reclamação de ruído após 22h', 'Vizinho do andar de baixo relata barulho de móveis arrastados e salto alto após as 22h.', 'Baixa']],
+  'Interfone': [
+    ['Interfone sem áudio', 'Portaria não consegue falar com a unidade. Técnico da central de interfonia acionado.', 'Média']],
+  'Portão/Garagem': [
+    ['Controle do portão da garagem não funciona', 'Solicitado novo TAG veicular. Taxa de reposição de R$ 45,00 lançada no próximo boleto.', 'Baixa']],
+  'Pet': [
+    ['Latidos frequentes no período da tarde', 'Reclamação de vizinhos sobre latidos enquanto os tutores estão fora. Enviada orientação do regulamento interno.', 'Baixa']],
+};
+const RES_AREAS = {
+  'Salão de Festas': { periodos: ['Tarde (12h–17h)','Noite (18h–23h)'], taxa: 180 },
+  'Área Gourmet':    { periodos: ['Almoço (11h–16h)','Jantar (18h–23h)'], taxa: 90 },
+  'Coworking':       { periodos: ['Manhã (08h–12h)','Tarde (13h–18h)','Noite (18h–22h)'], taxa: 0 },
+  'Lavanderia':      { periodos: ['07h–09h','09h–11h','14h–16h','19h–21h'], taxa: 0 },
+};
+
+function generate() {
+  const R = mulberry(1689);
+  const pick = a => a[Math.floor(R() * a.length)];
+  const chance = p => R() < p;
+  const rint = (a, b) => a + Math.floor(R() * (b - a + 1));
+  const slug = s => norm(s).replace(/[^a-z]/g, '');
+  const L = () => 'ABCDEFGHJKLMNPQRSTUVWXYZ'[rint(0, 23)];
+  const person = (g = chance(.5) ? 'f' : 'm', last) => {
+    const fn = pick(g === 'f' ? FN_F : FN_M);
+    const ln1 = last || pick(LN); const ln2 = chance(.55) ? ' ' + pick(LN) : '';
+    const nome = `${fn} ${ln1}${ln2}`;
+    return { nome, g, tel: `(11) 9${rint(4000, 9999)}-${rint(1000, 9999)}`,
+      email: `${slug(fn)}.${slug((ln2 || ln1).trim())}${chance(.3) ? rint(1, 99) : ''}@${pick(DOMAINS)}` };
+  };
+
+  const idx = [...Array(FLOORS * PER_FLOOR).keys()];
+  for (let i = idx.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+  { const k = idx.indexOf(59); [idx[k], idx[25]] = [idx[25], idx[k]]; } // Apto 84: unidade de exemplo com reforma em andamento
+  const VAZIO = new Set(idx.slice(0, 8)), INAD = new Set(idx.slice(8, 22)), MANUT = new Set(idx.slice(22, 33));
+
+  let vaga1 = 1, vaga2 = 1, ch = 1, pc = 1, rs = 1;
+  const taken = new Set();
+  const units = [];
+  for (let f = 1; f <= FLOORS; f++) for (let p = 1; p <= PER_FLOOR; p++) {
+    const i = (f - 1) * PER_FLOOR + (p - 1);
+    const front = p <= 4, corner = [1, 4, 5, 8].includes(p);
+    const area = corner ? (front ? 52 : 50) : (front ? 48 : 45);
+    const vazio = VAZIO.has(i), inad = INAD.has(i), manut = MANUT.has(i);
+    const owner = person();
+    const tenant = !vazio && chance(.27) ? person() : null;
+    const titular = tenant || owner;
+    const residents = [];
+    if (!vazio) {
+      const n = rint(1, area >= 50 ? 5 : 4);
+      residents.push({ nome: titular.nome, rel: tenant ? 'Inquilino(a) titular' : 'Proprietário(a)', idade: rint(26, 69) });
+      const last = titular.nome.split(' ').slice(-1)[0];
+      if (n >= 2) { const s = person(titular.g === 'f' ? 'm' : 'f', last); residents.push({ nome: s.nome, rel: 'Cônjuge', idade: rint(25, 66) }); }
+      for (let k = 2; k < n; k++) { const c = person(undefined, last); residents.push({ nome: c.nome.split(' ')[0] + ' ' + last, rel: c.g === 'f' ? 'Filha' : 'Filho', idade: rint(1, 22) }); }
+    }
+    const pets = [];
+    if (!vazio && chance(.38)) {
+      for (let k = 0, n = chance(.25) ? 2 : 1; k < n; k++) {
+        const dog = chance(.72); const br = dog ? pick(DOG_BREEDS) : [pick(CAT_BREEDS), 'Pequeno'];
+        pets.push({ nome: dog ? pick(DOGS) : pick(CATS), especie: dog ? 'Cão' : 'Gato', raca: br[0], porte: br[1],
+          petcare: chance(.86) ? `PC-${pad(pc++, 3)}` : null, vacina: iso(addDays(TODAY, rint(-70, 330))) });
+      }
+    }
+    const vaga = front ? `G1-${pad(vaga1++, 3)}` : `G2-${pad(vaga2++, 3)}`;
+    const vehicle = !vazio && chance(.74) ? { placa: `${L()}${L()}${L()}${rint(0,9)}${L()}${rint(0,9)}${rint(0,9)}`, modelo: pick(CARS), cor: pick(COLORS_CAR), ano: rint(2014, 2026) } : null;
+
+    const base = vazio ? 0.3 : residents.length;
+    const agua = [], gas = [];
+    for (let k = 0; k < 6; k++) { agua.push(r2(Math.max(.4, base * 1.7 + (R() - .4) * 2.4))); gas.push(r2(Math.max(.2, base * .75 + (R() - .4) * 1.2))); }
+
+    // boletos: competências M-5..M, vencimento dia 10 do mês seguinte
+    const bills = [];
+    for (let k = 5; k >= 0; k--) {
+      const comp = new Date(TODAY.getFullYear(), TODAY.getMonth() - k, 1);
+      const venc = new Date(comp.getFullYear(), comp.getMonth() + 1, 10);
+      const j = 5 - k;
+      const ordinaria = r2(area * 11.6), fundo = r2(ordinaria * .05), aguaV = r2(agua[j] * 13.4), gasV = r2(gas[j] * 9.2);
+      bills.push({ comp: iso(comp), label: `${MES[comp.getMonth()]}/${String(comp.getFullYear()).slice(2)}`, venc: iso(venc),
+        ordinaria, fundo, agua: aguaV, gas: gasV, valor: r2(ordinaria + fundo + aguaV + gasV), pagoEm: null });
+    }
+    const pastIdx = bills.map((b, j) => parseISO(b.venc) < TODAY ? j : -1).filter(j => j >= 0);
+    const unpaid = new Set(inad ? pastIdx.slice(-rint(1, Math.min(4, pastIdx.length))) : []);
+    bills.forEach((b, j) => {
+      const v = parseISO(b.venc);
+      if (v < TODAY) { if (!unpaid.has(j)) b.pagoEm = iso(chance(.08) ? addDays(v, rint(1, 9)) : addDays(v, -rint(0, 6))); }
+      else if (!inad && chance(.28)) { const d = addDays(TODAY, -rint(0, 6)); b.pagoEm = iso(d > v ? v : d); }
+    });
+
+    const tickets = [];
+    const mkT = (cat, status, daysAgo) => {
+      const [titulo, desc, prio] = pick(TICKET_TPL[cat]);
+      const aberto = addDays(TODAY, -daysAgo);
+      const notas = [{ data: iso(aberto) + 'T09:30', autor: 'Portaria / Zeladoria', texto: 'Chamado registrado a pedido do morador.' }];
+      if (status !== 'Aberto') notas.push({ data: iso(addDays(aberto, Math.max(1, Math.floor(daysAgo / 2)))) + 'T14:10', autor: 'Zeladoria', texto: status === 'Concluído' ? 'Serviço concluído e validado com o morador.' : 'Prestador visitou a unidade; serviço em execução.' });
+      tickets.push({ id: `CH-${TODAY.getFullYear()}-${pad(ch++, 4)}`, titulo, categoria: cat, desc, prioridade: prio, status, aberto: iso(aberto), notas });
+    };
+    if (manut) mkT(pick(['Reforma','Envidraçamento de sacada','Envidraçamento de sacada','Vazamento','Infiltração','Elétrica','Reforma']), pick(['Aberto','Em andamento','Em andamento']), rint(1, 25));
+    if (!vazio && chance(.34)) {
+      if (chance(.6)) mkT(pick(Object.keys(TICKET_TPL)), 'Concluído', rint(20, 120));
+      else mkT(pick(['Ruído','Interfone','Portão/Garagem','Pet']), pick(['Aberto','Em andamento']), rint(1, 30));
+    }
+
+    const reservas = [];
+    if (!vazio && chance(.36)) {
+      for (let k = 0, n = chance(.3) ? 2 : 1; k < n; k++) {
+        const area_ = pick(['Salão de Festas','Área Gourmet','Área Gourmet','Coworking','Coworking','Lavanderia']);
+        const per = pick(RES_AREAS[area_].periodos); const d = iso(addDays(TODAY, rint(-4, 28)));
+        const key = `${area_}|${d}|${per}`; if (taken.has(key)) continue; taken.add(key);
+        reservas.push({ id: `R-${pad(rs++, 4)}`, area: area_, data: d, periodo: per, convidados: area_.startsWith('Sal') ? rint(20, 60) : area_ === 'Área Gourmet' ? rint(6, 20) : 0,
+          status: d < TODAY_ISO ? 'Realizada' : (RES_AREAS[area_].taxa && chance(.25) ? 'Aguardando pagamento' : 'Confirmada') });
+      }
+    }
+    units.push({ id: `${f}${p}`, floor: f, pos: p, front, area, dorms: 2, suite: area >= 50, vazio, vazioMotivo: vazio ? pick(['À venda','Disponível para locação','Em transição de inquilino']) : null,
+      owner, ownerReside: !vazio && !tenant, tenant, contratoAte: tenant ? iso(addDays(TODAY, rint(60, 700))) : null,
+      residents, pets, vehicle, vaga, agua, gas, bills, tickets, reservas, boletos: [], light: .02 + R() * .12 });
+  }
+  // garante algumas reservas hoje
+  const occ = units.filter(u => !u.vazio);
+  const todayPlan = [['Área Gourmet','Jantar (18h–23h)'],['Coworking','Manhã (08h–12h)'],['Lavanderia','09h–11h'],['Salão de Festas','Noite (18h–23h)'],['Coworking','Tarde (13h–18h)']];
+  todayPlan.forEach(([a, per], k) => {
+    const key = `${a}|${TODAY_ISO}|${per}`; if (taken.has(key)) return; taken.add(key);
+    const u = occ[(k * 23 + 7) % occ.length];
+    u.reservas.push({ id: `R-${pad(rs++, 4)}`, area: a, data: TODAY_ISO, periodo: per, convidados: a.startsWith('Sal') ? 45 : a === 'Área Gourmet' ? 14 : 0, status: 'Confirmada' });
+  });
+  return units;
+}
+
+/* =========================================================
+   ESTADO + PERSISTÊNCIA (log de eventos sobre a base gerada)
+   ========================================================= */
+const LS_KEY = 'mobby-vg-eventos-v1';
+let events = [];
+try { events = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { events = []; }
+let units = generate();
+let unitMap = Object.fromEntries(units.map(u => [u.id, u]));
+function applyEvent(ev) {
+  const u = unitMap[ev.unit]; if (!u) return;
+  if (ev.t === 'note') { const t = u.tickets.find(x => x.id === ev.ticket); if (!t) return; if (ev.texto) t.notas.push({ data: ev.data, autor: 'Síndico', texto: ev.texto }); if (ev.status) t.status = ev.status; }
+  else if (ev.t === 'ticket') u.tickets.unshift(JSON.parse(JSON.stringify(ev.ticket)));
+  else if (ev.t === 'reserva') u.reservas.push({ ...ev.reserva });
+  else if (ev.t === 'cancelReserva') { const r = u.reservas.find(x => x.id === ev.rid); if (r) r.status = 'Cancelada'; }
+  else if (ev.t === 'boleto') u.boletos.push({ data: ev.data, comp: ev.comp, canais: ev.canais });
+}
+events.forEach(applyEvent);
+function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(events)); } catch {} }
+function commit(ev) { events.push(ev); applyEvent(ev); save(); refreshAll(); }
+
+/* ---------- derivados ---------- */
+const billStatus = b => b.pagoEm ? 'Pago' : (parseISO(b.venc) < TODAY ? 'Atrasado' : 'Pendente');
+const monthsLate = b => Math.max(1, Math.ceil((TODAY - parseISO(b.venc)) / (30 * 864e5)));
+const billUpdated = b => r2(b.valor * (1.02 + .01 * monthsLate(b)));
+function finStatus(u) { let late = false, pend = false; for (const b of u.bills) { const s = billStatus(b); if (s === 'Atrasado') late = true; else if (s === 'Pendente') pend = true; } return late ? 'Atrasado' : pend ? 'Pendente' : 'Pago'; }
+const debt = u => r2(u.bills.filter(b => billStatus(b) === 'Atrasado').reduce((a, b) => a + billUpdated(b), 0));
+const openTickets = u => u.tickets.filter(t => t.status !== 'Concluído');
+function unitStatus(u) {
+  if (u.vazio) return 'vazio';
+  if (finStatus(u) === 'Atrasado') return 'inad';
+  if (openTickets(u).some(t => MANUT_CATS.includes(t.categoria))) return 'manut';
+  return 'ok';
+}
+const ST = {
+  ok:    { label: 'Adimplente · Ocupado', c: '#34d399' },
+  inad:  { label: 'Inadimplente',         c: '#f87171' },
+  manut: { label: 'Manutenção / Reforma', c: '#fbbf24' },
+  vazio: { label: 'Vazio',                c: '#94a3b8' },
+};
+const FIN_C = { Pago: '#34d399', Pendente: '#fb923c', Atrasado: '#f43f5e', Vazio: '#64748b' };
+const TK_C = { 'Aberto': '#f87171', 'Em andamento': '#fbbf24', 'Concluído': '#34d399' };
+const PR_C = { 'Alta': '#fb7185', 'Média': '#fbbf24', 'Baixa': '#93c5fd' };
+const RS_C = { 'Confirmada': '#34d399', 'Aguardando pagamento': '#fb923c', 'Realizada': '#94a3b8', 'Cancelada': '#64748b' };
+const allReservas = () => units.flatMap(u => u.reservas.map(r => ({ ...r, unit: u.id })));
+const activeRes = u => u.reservas.filter(r => r.data >= TODAY_ISO && r.status !== 'Cancelada').sort((a, b) => a.data.localeCompare(b.data));
+const floorName = f => f === 0 ? 'Térreo' : `${f}º andar`;
+
+/* =========================================================
+   ÁREAS COMUNS
+   ========================================================= */
+const AREAS = [
+  { id: 'piscina', nome: 'Piscina', res: null, pos: [-8, .6, -24], cam: [6, 20, -50], horario: '07h às 22h', cap: '40 pessoas', local: 'Térreo · fundos',
+    desc: 'Piscina adulto e infantil com deck molhado e solário com espreguiçadeiras.', regras: ['Proibido recipientes de vidro', 'Crianças menores de 12 anos somente acompanhadas', 'Uso de ducha obrigatório antes do banho'],
+    extra: () => `<div class="grid2"><div class="stat"><div class="k">pH</div><div class="v">7,4</div></div><div class="stat"><div class="k">Cloro livre</div><div class="v">1,8 ppm</div></div></div><div class="dim" style="font-size:12px;margin-top:8px">Última análise: hoje, 08h10 · Responsável: Aquaclean Piscinas</div>` },
+  { id: 'gourmet', nome: 'Área Gourmet', res: 'Área Gourmet', pos: [7, 1.6, -24], cam: [26, 12, -42], horario: '10h às 23h', cap: '20 pessoas', local: 'Térreo · ao lado da piscina',
+    desc: 'Espaço com churrasqueira, forno de pizza, bancada e geladeira, integrado ao solário.', regras: ['Taxa de uso R$ 90,00 por período', 'Limpeza básica sob responsabilidade do condômino', 'Som ambiente até 22h'] },
+  { id: 'salao', nome: 'Salão de Festas', res: 'Salão de Festas', pos: [-22, 2.2, -8], cam: [-46, 14, -24], horario: '10h às 23h', cap: '60 pessoas', local: 'Térreo · ala oeste',
+    desc: 'Salão climatizado com copa de apoio, mobiliário e acesso ao jardim.', regras: ['Taxa de uso R$ 180,00 por período', 'Lista de convidados enviada à portaria com 24h de antecedência', 'Vistoria de entrega e devolução das chaves'] },
+  { id: 'cowork', nome: 'Coworking', res: 'Coworking', pos: [-7, 2, 6], cam: [-20, 7, 28], horario: '06h às 23h', cap: '12 posições', local: 'Térreo · lobby (lado esquerdo)',
+    desc: 'Estações de trabalho, sala de reunião envidraçada, Wi-Fi dedicado e impressora.', regras: ['Reserva por período via app', 'Ligações apenas na sala de reunião', 'Mantenha a mesa limpa após o uso'] },
+  { id: 'lavanderia', nome: 'Lavanderia Compartilhada', res: 'Lavanderia', pos: [7, 2, 6], cam: [22, 7, 28], horario: '07h às 22h', cap: '4 lavadoras · 4 secadoras', local: 'Térreo · lobby (lado direito)',
+    desc: 'Lavanderia coletiva com máquinas por ficha digital (cobrança no boleto).', regras: ['Reserva em blocos de 2 horas', 'Retire as roupas em até 15 min após o ciclo', 'Proibido lavar tapetes e itens de pets'] },
+  { id: 'petcare', nome: 'Pet Care', res: null, pos: [21, .6, 9], cam: [38, 12, 26], horario: '06h às 22h', cap: '8 pets simultâneos', local: 'Térreo · jardim leste',
+    desc: 'Espaço pet com área de agility, bebedouro e ducha para banho dos animais.', regras: ['Cadastro Pet Care e vacina antirrábica em dia', 'Recolha os dejetos do seu pet', 'Cães de grande porte com guia na circulação'],
+    extra: () => {
+      const pets = units.flatMap(u => u.pets.map(p => ({ ...p, unit: u.id })));
+      const venc = pets.filter(p => p.vacina < TODAY_ISO);
+      return `<div class="grid2"><div class="stat"><div class="k">Pets cadastrados</div><div class="v">${pets.filter(p => p.petcare).length}<span class="dim" style="font-size:12px;font-weight:500"> / ${pets.length}</span></div></div><div class="stat"><div class="k">Vacina vencida</div><div class="v" style="color:${venc.length ? 'var(--bad)' : 'inherit'}">${venc.length}</div></div></div>
+      ${venc.length ? `<div class="list" style="margin-top:10px">${venc.map(p => `<div class="li clk" data-unit="${p.unit}"><div class="grow"><b>${esc(p.nome)}</b> <span class="sub">· ${p.especie} ${esc(p.raca)}</span><div class="sub">Antirrábica venceu em ${fmtD(p.vacina)}</div></div><span class="tag">Apto ${p.unit}</span></div>`).join('')}</div>` : ''}`;
+    } },
+  { id: 'playground', nome: 'Playground', res: null, pos: [17, 1, -25], cam: [34, 11, -42], horario: '08h às 20h', cap: '15 crianças', local: 'Térreo · fundos (leste)',
+    desc: 'Brinquedos com piso emborrachado, escorregador, balanços e casinha.', regras: ['Crianças até 10 anos', 'Menores de 6 anos acompanhados de responsável'] },
+];
+
+/* =========================================================
+   CENA 3D
+   ========================================================= */
+const viewport = $('#viewport');
+const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+viewport.prepend(renderer.domElement);
+const labelR = new CSS2DRenderer();
+Object.assign(labelR.domElement.style, { position: 'absolute', top: 0, left: 0, pointerEvents: 'none', zIndex: 4 });
+viewport.appendChild(labelR.domElement);
+
+const scene = new THREE.Scene();
+{ // céu em degradê
+  const c = document.createElement('canvas'); c.width = 2; c.height = 256; const g = c.getContext('2d');
+  const gr = g.createLinearGradient(0, 0, 0, 256); gr.addColorStop(0, '#6f9ccc'); gr.addColorStop(.55, '#b9d0e6'); gr.addColorStop(1, '#e9eef2');
+  g.fillStyle = gr; g.fillRect(0, 0, 2, 256);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scene.background = t;
+}
+scene.fog = new THREE.Fog(0xd5e0ea, 140, 420);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+scene.environmentIntensity = .55;
+
+const camera = new THREE.PerspectiveCamera(38, 1, .5, 1200);
+const HOME = { cam: new THREE.Vector3(62, 38, 78), tgt: new THREE.Vector3(0, 21, -2) };
+camera.position.copy(HOME.cam);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.copy(HOME.tgt); controls.enableDamping = true; controls.dampingFactor = .08;
+controls.maxPolarAngle = Math.PI * .495; controls.minDistance = 6; controls.maxDistance = 230;
+controls.autoRotateSpeed = .6;
+
+scene.add(new THREE.HemisphereLight(0xdbe9ff, 0x5a5544, .75));
+const sun = new THREE.DirectionalLight(0xfff0dc, 2.4);
+sun.position.set(70, 95, 55); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -70, right: 70, top: 70, bottom: -70, near: 10, far: 260 });
+sun.shadow.bias = -.0004; sun.shadow.normalBias = .03;
+scene.add(sun);
+
+const std = (color, roughness = .8, metalness = 0, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness, metalness, ...extra });
+const MAT = {
+  concrete: std(0xe9e6e0, .88), concrete2: std(0xcbc6bd, .85), gray: std(0x8d939b, .7), dark: std(0x2b3038, .55, .3),
+  terracotta: std(0xb5653f, .82), wood: std(0x9b6a43, .65), paving: std(0xd2cdc3, .95), grass: std(0x6f8f4e, 1), grass2: std(0x7fa05a, 1),
+  asphalt: std(0x33363b, .95), sidewalk: std(0xbdb7ac, .95), white: std(0xf4f3ef, .6), deck: std(0xa77650, .7),
+  glass: new THREE.MeshPhysicalMaterial({ color: 0xb8d3e2, roughness: .05, metalness: 0, transparent: true, opacity: .3, depthWrite: false }),
+  winGlass: std(0x243341, .1, .6),
+  water: std(0x2fb4d4, .06, .1, { emissive: 0x0b5466, emissiveIntensity: .35 }),
+  hit: new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }),
+};
+const BOX = new THREE.BoxGeometry(1, 1, 1);
+function box(w, h, d, mat, x, y, z, parent = scene, { cast = true, recv = true } = {}) {
+  const m = new THREE.Mesh(BOX, mat); m.scale.set(w, h, d); m.position.set(x, y, z);
+  m.castShadow = cast; m.receiveShadow = recv; parent.add(m); return m;
+}
+function label(text, pos, cls = 'pin', onClick) {
+  const el = document.createElement('div'); el.className = cls;
+  el.innerHTML = cls === 'pin' ? `<i>●</i>${esc(text)}` : esc(text);
+  if (onClick) el.addEventListener('click', e => { e.stopPropagation(); onClick(); });
+  const o = new CSS2DObject(el); o.position.set(...pos); scene.add(o); return o;
+}
+
+/* --- dimensões da torre --- */
+const UW = 6.5, TW = 26, TD = 16, GH = 4.6, FH = 3.0, TOP = GH + FLOORS * FH;
+function unitGeom(u) {
+  const i = (u.pos - 1) % 4, n = u.front ? 1 : -1;
+  const x = u.front ? -TW / 2 + UW * (i + .5) : TW / 2 - UW * (i + .5);
+  return { x, yb: GH + (u.floor - 1) * FH, zf: n * TD / 2, n };
+}
+
+const tower = new THREE.Group(); scene.add(tower);
+const body = box(TW, FLOORS * FH, TD, MAT.concrete, 0, GH + FLOORS * FH / 2, 0, tower);
+for (let f = 0; f <= FLOORS; f++) box(TW + .3, .32, TD + .3, MAT.concrete2, 0, GH + f * FH, 0, tower, { cast: false });
+// brises / painéis amadeirados e terracota
+for (const z of [1, -1]) for (const x of [-13, -6.5, 0, 6.5, 13]) {
+  const corner = Math.abs(x) === 13;
+  if (corner) box(.7, FLOORS * FH + .6, 1.95, MAT.terracotta, x, GH + FLOORS * FH / 2 + .3, z * (TD / 2 + .95), tower);
+  else box(.3, FLOORS * FH + .6, .9, x === 0 ? MAT.wood : MAT.concrete2, x, GH + FLOORS * FH / 2 + .3, z * (TD / 2 + .45), tower);
+}
+// laterais: faixas terracota + janelas
+for (const sx of [1, -1]) {
+  for (const z of [-5.2, 5.2]) box(.3, FLOORS * FH, 2.6, MAT.terracotta, sx * (TW / 2 + .15), GH + FLOORS * FH / 2, z, tower);
+  const wins = new THREE.InstancedMesh(BOX, MAT.winGlass, FLOORS * 3); const m4 = new THREE.Matrix4(); let k = 0;
+  for (let f = 0; f < FLOORS; f++) for (const z of [-2.2, 0, 2.2]) {
+    m4.compose(new THREE.Vector3(sx * (TW / 2 + .03), GH + f * FH + 1.65, z), new THREE.Quaternion(), new THREE.Vector3(.06, 1.5, 1.4)); wins.setMatrixAt(k++, m4);
+  }
+  tower.add(wins);
+}
+// unidades: varandas com terraço grill, guarda-corpo de vidro, porta de vidro e faixa de status
+const unitMeshes = {}; const hitMeshes = [];
+const ledGeo = BOX;
+for (const u of units) {
+  const { x, yb, zf, n } = unitGeom(u);
+  box(UW - .5, .2, 1.75, MAT.concrete, x, yb + .1, zf + n * .875, tower);
+  box(UW - .5, 1.0, .05, MAT.glass, x, yb + .7, zf + n * 1.7, tower, { cast: false });
+  box(UW - .5, .06, .09, MAT.dark, x, yb + 1.22, zf + n * 1.7, tower, { cast: false });
+  box(.75, 1.0, .45, MAT.dark, x + (UW / 2 - 1.05) * (u.front ? 1 : -1), yb + .7, zf + n * .3, tower); // churrasqueira
+  box(UW - .7, FH - .55, .12, MAT.concrete2, x, yb + (FH) / 2 + .1, zf + n * .02, tower, { cast: false }).scale.z = .04;
+  const doorMat = std(0x1d2833, .12, .6, { emissive: 0x000000 });
+  const door = box(UW - 1.6, FH - .8, .06, doorMat, x - (u.front ? .4 : -.4), yb + .2 + (FH - .8) / 2, zf + n * .06, tower, { cast: false });
+  const ledMat = new THREE.MeshStandardMaterial({ color: 0x111111, emissive: 0x000000, roughness: .4 });
+  const led = box(UW - .5, .07, .07, ledMat, x, yb + .02, zf + n * 1.76, tower, { cast: false, recv: false });
+  const hit = box(UW - .1, FH - .06, 2.2, MAT.hit, x, yb + FH / 2, zf + n * 1.0, tower, { cast: false, recv: false });
+  hit.userData.unit = u.id; hitMeshes.push(hit);
+  unitMeshes[u.id] = { door, led, hit, doorMat, ledMat };
+}
+// cobertura
+box(TW + .4, 1.3, TD + .4, MAT.concrete, 0, TOP + .65, 0, tower);
+box(TW + .9, .55, TD + .9, MAT.terracotta, 0, TOP + 1.3, 0, tower);
+box(9, 3.6, 6.5, MAT.concrete2, -3, TOP + 3.1, -1, tower);
+for (const x of [5, 8.2]) { const c = new THREE.Mesh(new THREE.CylinderGeometry(1.3, 1.3, 2.6, 24), MAT.white); c.position.set(x, TOP + 2.6, 2); c.castShadow = true; tower.add(c); }
+for (let i = 0; i < 5; i++) { const p = box(2.2, .08, 1.3, std(0x1e3a5f, .3, .5), -8 + i * 2.6, TOP + 1.8, 5.5, tower); p.rotation.x = -.25; }
+// térreo: lobby envidraçado + pilotis
+box(TW - 1.2, GH - .3, TD - 1.2, MAT.glass, 0, (GH - .3) / 2, 0, tower, { cast: false });
+box(TW - 1.4, .12, TD - 1.4, std(0x9a948a, .5), 0, .06, 0, tower, { cast: false });
+box(TW + .6, .55, TD + .6, MAT.concrete2, 0, GH - .2, 0, tower);
+for (const x of [-12.6, -6.5, 0, 6.5, 12.6]) for (const z of [-7.6, 7.6]) box(.6, GH - .4, .6, MAT.concrete2, x, (GH - .4) / 2, z, tower);
+box(.4, GH - .4, TD - 1.4, MAT.wood, 0, (GH - .4) / 2, 0, tower);
+// interior: coworking (mesas) e lavanderia (máquinas)
+for (let i = 0; i < 3; i++) { box(2.2, .08, 1.1, MAT.wood, -10 + i * 3, .78, 4.5, tower, { cast: false }); box(.15, .75, .15, MAT.dark, -10 + i * 3, .4, 4.5, tower, { cast: false }); }
+for (let i = 0; i < 4; i++) box(.75, .9, .75, MAT.white, 4 + i * 1.6, .45, 5.8, tower, { cast: false });
+box(8, .25, 4.5, MAT.terracotta, 0, GH - .5, TD / 2 + 2.6, tower); // marquise
+for (const x of [-3.6, 3.6]) box(.18, GH - .6, .18, MAT.dark, x, (GH - .6) / 2, TD / 2 + 4.6, tower);
+
+/* --- entorno / lote --- */
+box(700, .1, 700, std(0x7c8570, 1), 0, -.06, 0, scene, { cast: false });
+box(70, .1, 62, MAT.paving, 0, .02, -10, scene, { cast: false });
+// jardins
+for (const [w, d, x, z] of [[18, 5, -16, 17], [18, 5, 16, 17], [10, 34, -30, -12], [6, 12, 28, -4]]) box(w, .3, d, MAT.grass2, x, .15, z, scene, { cast: false });
+// rua e calçadas — Av. São Bento
+box(700, .06, 12, MAT.asphalt, 0, .03, 30, scene, { cast: false });
+box(700, .2, 3.4, MAT.sidewalk, 0, .1, 22.3, scene, { cast: false });
+box(700, .2, 3.4, MAT.sidewalk, 0, .1, 37.7, scene, { cast: false });
+{ const dash = new THREE.InstancedMesh(BOX, std(0xf5f1e6, .6), 60); const m4 = new THREE.Matrix4();
+  for (let i = 0; i < 60; i++) { m4.compose(new THREE.Vector3(-240 + i * 8, .07, 30), new THREE.Quaternion(), new THREE.Vector3(3.4, .02, .22)); dash.setMatrixAt(i, m4); } scene.add(dash); }
+label('Av. São Bento', [-38, .4, 30], 'pin street');
+// muro / gradil
+for (const [w, d, x, z] of [[24, .3, -23, 20.4], [24, .3, 23, 20.4], [.3, 62, -35, -10], [.3, 62, 35, -10], [70, .3, 0, -41]]) box(w, 1.6, d, MAT.concrete2, x, .8, z, scene);
+// acesso / passeio
+box(4, .06, 12, std(0xb9a58c, .9), 0, .06, 14.5, scene, { cast: false });
+// portaria 24h
+box(5, 3, 4, MAT.glass, -22, 1.5, 17.5, scene, { cast: false });
+box(6, .3, 5, MAT.dark, -22, 3.15, 17.5, scene);
+box(.4, 3, 4, MAT.terracotta, -24.6, 1.5, 17.5, scene);
+label('Portaria 24h', [-22, 4.2, 17.5], 'pin', () => toast('Portaria 24h · ramal 9000 · equipe Vigilância Prime'));
+// rampa da garagem
+box(5, .05, 9, std(0x3b3f46, .9), 27, .07, 15.5, scene, { cast: false });
+label('Garagem (subsolo)', [27, 1.5, 15.5], 'pin', () => toast('Garagem: 2 subsolos · 120 vagas (G1-001 a G2-060)'));
+
+// piscina + solário
+box(15.6, .5, 7.6, MAT.white, -8, .25, -24, scene);
+box(14, .1, 6, MAT.water, -8, .48, -24, scene, { cast: false });
+const water = scene.children[scene.children.length - 1];
+box(4, .1, 3, MAT.water, 2, .48, -24, scene, { cast: false }); box(5, .5, 4.2, MAT.white, 2, .23, -24, scene);
+box(24, .14, 4.5, MAT.deck, -6, .08, -30, scene, { cast: false });
+for (let i = 0; i < 6; i++) { const l = box(.8, .25, 2, MAT.white, -15 + i * 3.4, .32, -30, scene); l.rotation.x = .08; }
+for (const x of [-13.3, -6.5, .3]) {
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(.06, .06, 2.6), MAT.dark); pole.position.set(x, 1.4, -31); scene.add(pole);
+  const um = new THREE.Mesh(new THREE.ConeGeometry(1.7, .7, 16), std(0xf3ece0, .9)); um.position.set(x, 2.8, -31); um.castShadow = true; scene.add(um);
+}
+// área gourmet (pergolado)
+{ const g = new THREE.Group(); g.position.set(8, 0, -24); scene.add(g);
+  for (const [x, z] of [[-3.5, -2.5], [3.5, -2.5], [-3.5, 2.5], [3.5, 2.5]]) box(.3, 3, .3, MAT.wood, x, 1.5, z, g);
+  for (let i = 0; i < 10; i++) box(7.6, .18, .16, MAT.wood, 0, 3.1, -2.5 + i * .56, g);
+  box(4.5, 1, .9, MAT.concrete2, -.5, .5, -1.8, g); box(1.3, 1.5, .9, MAT.dark, 2.6, .75, -1.8, g); box(.4, 1.4, .4, MAT.dark, 2.6, 2.2, -1.8, g);
+  box(2.6, .08, 1.2, MAT.wood, 0, .8, 1, g); box(7.6, .1, 5.6, MAT.deck, 0, .05, 0, g, { cast: false }); }
+// playground
+{ const g = new THREE.Group(); g.position.set(18, 0, -25); scene.add(g);
+  box(10, .1, 9, std(0x4f9d69, .95), 0, .05, 0, g, { cast: false });
+  box(2.2, 2.2, 2.2, std(0xf59e0b, .7), -2.5, 1.2, -1.5, g); box(2.4, .2, 2.4, std(0xe11d48, .7), -2.5, 2.4, -1.5, g);
+  const s = box(1, .1, 4, std(0x38bdf8, .5), -2.5, 1.2, 1.4, g); s.rotation.x = .5;
+  for (const x of [1.5, 4.5]) { box(.15, 2.6, .15, std(0x2563eb, .6), x, 1.3, -2, g); box(.15, 2.6, .15, std(0x2563eb, .6), x, 1.3, 2, g); }
+  box(3.3, .15, .15, std(0x2563eb, .6), 3, 2.6, -2, g); box(3.3, .15, .15, std(0x2563eb, .6), 3, 2.6, 2, g); box(.15, .15, 4.2, std(0x2563eb, .6), 3, 2.6, 0, g);
+  for (const z of [-1, 1]) box(.7, .08, .35, std(0xfacc15, .6), 3, .6, z, g); }
+// salão de festas
+{ const g = new THREE.Group(); g.position.set(-22, 0, -8); scene.add(g);
+  box(10, .3, 13, MAT.concrete2, 0, .15, 0, g); box(9, 3.6, 12, MAT.glass, 0, 2.1, 0, g, { cast: false });
+  box(.35, 3.6, 12, MAT.wood, -4.5, 2.1, 0, g); box(11, .45, 14, MAT.dark, 0, 4.1, 0, g);
+  for (const [x, z] of [[-1.5, -3], [1.5, -3], [-1.5, 1], [1.5, 1], [0, 4]]) { const t = new THREE.Mesh(new THREE.CylinderGeometry(.6, .6, .08, 16), MAT.white); t.position.set(x, 1.05, z); g.add(t); } }
+// pet care
+{ const g = new THREE.Group(); g.position.set(21, 0, 9); scene.add(g);
+  box(9, .25, 9, std(0x86b06a, 1), 0, .13, 0, g, { cast: false });
+  const posts = new THREE.InstancedMesh(BOX, MAT.dark, 32); const m4 = new THREE.Matrix4(); let k = 0;
+  for (let i = 0; i < 8; i++) for (const [x, z] of [[-4.5 + i * 1.28, -4.5], [-4.5 + i * 1.28, 4.5], [-4.5, -4.5 + i * 1.28], [4.5, -4.5 + i * 1.28]]) { m4.compose(new THREE.Vector3(x, .6, z), new THREE.Quaternion(), new THREE.Vector3(.1, 1.2, .1)); posts.setMatrixAt(k++, m4); }
+  g.add(posts);
+  for (const [w, d, x, z] of [[9, .06, 0, -4.5], [9, .06, 0, 4.5], [.06, 9, -4.5, 0], [.06, 9, 4.5, 0]]) box(w, .06, d, MAT.dark, x, 1.15, z, g, { cast: false });
+  box(1.4, 1, 1.4, MAT.terracotta, 2.5, .6, -2.5, g); const rf = new THREE.Mesh(new THREE.ConeGeometry(1.15, .7, 4), MAT.dark); rf.position.set(2.5, 1.45, -2.5); rf.rotation.y = Math.PI / 4; g.add(rf);
+  for (let i = 0; i < 3; i++) box(.15, .5, 1.5, std(0xf59e0b, .7), -2.5 + i * 1.2, .5, 1.5, g); }
+
+// árvores
+{ const R = mulberry(7); const pts = [];
+  for (let x = -90; x <= 90; x += 9) { if (Math.abs(x) > 3) pts.push([x + R() * 2, 22.3 + (R() - .5)]); pts.push([x + 4 + R() * 2, 37.7]); }
+  for (let z = -38; z <= 14; z += 6) { pts.push([-31 + R(), z]); pts.push([31.5 + R(), z - 2]); }
+  for (const p of [[-17, 16], [-12, 18], [13, 16], [18, 18], [-28, -36], [28, -37]]) pts.push(p);
+  const trunk = new THREE.InstancedMesh(new THREE.CylinderGeometry(.18, .26, 2.6, 6), std(0x5b4334, .9), pts.length);
+  const crown = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 1), std(0xffffff, .95), pts.length);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), col = new THREE.Color();
+  pts.forEach(([x, z], i) => { const s = 1.6 + R() * 1.4;
+    m4.compose(new THREE.Vector3(x, 1.3, z), q, new THREE.Vector3(1, 1, 1)); trunk.setMatrixAt(i, m4);
+    m4.compose(new THREE.Vector3(x, 2.4 + s * .8, z), q, new THREE.Vector3(s, s * 1.05, s)); crown.setMatrixAt(i, m4);
+    crown.setColorAt(i, col.setHSL(.24 + R() * .07, .38 + R() * .15, .3 + R() * .1)); });
+  trunk.castShadow = crown.castShadow = true; scene.add(trunk, crown); }
+// vizinhança (Vila Galvão)
+{ const R = mulberry(42); const cols = [0xd9d3c7, 0xc9c4bb, 0xe6dfd2, 0xbfc4c9, 0xd6c2ad, 0xa9b0b8];
+  for (let i = 0; i < 90; i++) {
+    const x = (R() - .5) * 320, z = (R() - .5) * 320;
+    if (x > -42 && x < 42 && z > -48 && z < 44) continue;
+    if (z > 18 && z < 42) continue;
+    const corridor = Math.abs(x) < 60; // mantém livres as vistas frontal e dos fundos
+    const tall = !corridor && R() < .16; const h = corridor ? 3 + R() * 4 : tall ? 18 + R() * 30 : 4 + R() * 8; const w = 8 + R() * 14, d = 8 + R() * 14;
+    box(w, h, d, std(cols[Math.floor(R() * cols.length)], .9), x, h / 2, z, scene, { cast: tall, recv: true });
+  } }
+
+// pinos das áreas comuns
+for (const a of AREAS) label(a.nome, a.pos, 'pin', () => openArea(a.id));
+
+// destaques (hover / seleção)
+const frameGeo = new THREE.BoxGeometry(UW - .05, FH - .02, 2.25);
+const hover = new THREE.Group();
+hover.add(new THREE.Mesh(frameGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .14, depthWrite: false })));
+hover.add(new THREE.LineSegments(new THREE.EdgesGeometry(frameGeo), new THREE.LineBasicMaterial({ color: 0xffffff })));
+hover.visible = false; scene.add(hover);
+const selBox = new THREE.Group();
+const selFill = new THREE.Mesh(frameGeo, new THREE.MeshBasicMaterial({ color: 0xffa36b, transparent: true, opacity: .25, depthWrite: false }));
+selBox.add(selFill, new THREE.LineSegments(new THREE.EdgesGeometry(frameGeo), new THREE.LineBasicMaterial({ color: 0xffb07f })));
+selBox.visible = false; scene.add(selBox);
+const placeAt = (g, id) => { const h = unitMeshes[id].hit; g.position.copy(h.position); g.visible = true; };
+
+/* --- modos de visualização --- */
+let mode = 'real';
+function applyMode() {
+  const map = mode !== 'real';
+  MAT.concrete.color.set(map ? 0x7c828c : 0xe9e6e0);
+  MAT.concrete2.color.set(map ? 0x6a7079 : 0xcbc6bd);
+  for (const u of units) {
+    const { doorMat, ledMat } = unitMeshes[u.id];
+    if (mode === 'real') {
+      ledMat.emissive.set(ST[unitStatus(u)].c); ledMat.emissiveIntensity = 1.1;
+      doorMat.color.set(0x1d2833); doorMat.emissive.set(u.vazio ? 0x000000 : 0xffc58f); doorMat.emissiveIntensity = u.vazio ? 0 : u.light;
+    } else if (mode === 'fin') {
+      const c = FIN_C[u.vazio ? 'Vazio' : finStatus(u)];
+      ledMat.emissive.set(c); ledMat.emissiveIntensity = 1.6;
+      doorMat.color.set(0x111111); doorMat.emissive.set(c); doorMat.emissiveIntensity = .9;
+    } else {
+      const ot = openTickets(u);
+      const c = ot.length ? (ot.some(t => t.prioridade === 'Alta') ? '#f97316' : '#facc15') : '#1b2330';
+      ledMat.emissive.set(c); ledMat.emissiveIntensity = ot.length ? 1.6 : .2;
+      doorMat.color.set(0x111111); doorMat.emissive.set(c); doorMat.emissiveIntensity = ot.length ? .95 : .15;
+    }
+  }
+  document.querySelectorAll('#modes button').forEach(b => b.classList.toggle('on', b.dataset.mode === mode));
+  renderLegend();
+}
+function renderLegend() {
+  let title, rows;
+  if (mode === 'real') { title = 'Status das unidades'; const c = { ok: 0, inad: 0, manut: 0, vazio: 0 }; units.forEach(u => c[unitStatus(u)]++);
+    rows = Object.entries(ST).map(([k, v]) => [v.c, v.label, c[k]]); }
+  else if (mode === 'fin') { title = 'Mapa de inadimplência'; const c = { Pago: 0, Pendente: 0, Atrasado: 0, Vazio: 0 }; units.forEach(u => c[u.vazio ? 'Vazio' : finStatus(u)]++);
+    rows = [[FIN_C.Pago, 'Em dia', c.Pago], [FIN_C.Pendente, 'Boleto a vencer', c.Pendente], [FIN_C.Atrasado, 'Atrasado', c.Atrasado], [FIN_C.Vazio, 'Vazio', c.Vazio]]; }
+  else { title = 'Alertas de manutenção'; let hi = 0, md = 0; units.forEach(u => { const o = openTickets(u); if (o.length) o.some(t => t.prioridade === 'Alta') ? hi++ : md++; });
+    rows = [['#f97316', 'Chamado de alta prioridade', hi], ['#facc15', 'Chamado aberto / reforma', md], ['#1b2330', 'Sem chamados', units.length - hi - md]]; }
+  $('#legend').innerHTML = `<h4>${title}</h4>` + rows.map(([c, l, n]) => `<div class="row"><span class="dot" style="background:${c};box-shadow:0 0 6px ${c}"></span><span>${l}</span><span>${n}</span></div>`).join('');
+}
+
+/* --- câmera: animações --- */
+let fly = null;
+function flyTo(tgt, cam, dur = 1.3) {
+  fly = { t0: performance.now(), dur: dur * 1000, fT: controls.target.clone(), tT: tgt.clone(), fC: camera.position.clone(), tC: cam.clone() };
+}
+controls.addEventListener('start', () => { fly = null; $('#hint').style.opacity = 0; });
+function focusUnit(u) {
+  const { x, yb, zf, n } = unitGeom(u);
+  const c = new THREE.Vector3(x, yb + FH / 2, zf + n);
+  const side = -Math.sign(x) || 1;
+  flyTo(c, new THREE.Vector3(x + side * 8, c.y + 4, zf + n * 30));
+  setFloorUI(u.floor);
+}
+function goFloor(f) {
+  f = Math.max(0, Math.min(FLOORS, f));
+  const y = f === 0 ? 2.4 : GH + (f - 1) * FH + FH / 2;
+  const dy = y - controls.target.y;
+  flyTo(new THREE.Vector3(controls.target.x, y, controls.target.z), camera.position.clone().add(new THREE.Vector3(0, dy, 0)), .7);
+  setFloorUI(f);
+}
+function setFloorUI(f) { $('#floor').value = f; $('#floorVal').textContent = f === 0 ? 'T' : f + 'º'; }
+$('#floor').addEventListener('input', e => goFloor(+e.target.value));
+$('#fUp').onclick = () => goFloor(+$('#floor').value + 1);
+$('#fDn').onclick = () => goFloor(+$('#floor').value - 1);
+$('#camReset').onclick = () => { flyTo(HOME.tgt, HOME.cam); setFloorUI(8); };
+$('#camFront').onclick = () => { flyTo(new THREE.Vector3(0, 24, 0), new THREE.Vector3(0, 26, 92)); setFloorUI(7); };
+$('#camBack').onclick = () => { flyTo(new THREE.Vector3(0, 10, -14), new THREE.Vector3(-30, 32, -78)); setFloorUI(2); };
+$('#camRot').onclick = e => { controls.autoRotate = !controls.autoRotate; e.currentTarget.classList.toggle('on', controls.autoRotate); };
+
+/* --- picking --- */
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+const pickables = [...hitMeshes, body];
+function pickUnit(ev) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ptr.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ptr, camera);
+  const h = ray.intersectObjects(pickables, false)[0];
+  return h && h.object.userData.unit ? h.object.userData.unit : null;
+}
+let hovered = null, down = null;
+const tip = $('#tip');
+renderer.domElement.addEventListener('pointermove', ev => {
+  if (ev.pointerType === 'touch') return;
+  const id = pickUnit(ev);
+  if (id !== hovered) {
+    if (hovered) restoreDoor(hovered);
+    hovered = id;
+    if (id) { placeAt(hover, id); const m = unitMeshes[id].doorMat; m.userData.prev = m.emissiveIntensity; m.emissiveIntensity = Math.max(.6, m.emissiveIntensity * 1.6); }
+    else hover.visible = false;
+    renderer.domElement.style.cursor = id ? 'pointer' : '';
+  }
+  if (id) {
+    const u = unitMap[id], st = unitStatus(u), r = viewport.getBoundingClientRect();
+    tip.style.display = 'block'; tip.style.left = (ev.clientX - r.left) + 'px'; tip.style.top = (ev.clientY - r.top) + 'px';
+    tip.innerHTML = `<b>Apto ${id}</b> · ${u.area} m²<small><span class="dot" style="background:${ST[st].c}"></span> ${ST[st].label} · ${esc(u.vazio ? u.vazioMotivo : (u.tenant || u.owner).nome)}</small>`;
+  } else tip.style.display = 'none';
+});
+function restoreDoor(id) { const m = unitMeshes[id].doorMat; if (m.userData.prev != null) { m.emissiveIntensity = m.userData.prev; m.userData.prev = null; } }
+renderer.domElement.addEventListener('pointerleave', () => { if (hovered) restoreDoor(hovered); hovered = null; hover.visible = false; tip.style.display = 'none'; });
+renderer.domElement.addEventListener('pointerdown', ev => { down = [ev.clientX, ev.clientY]; });
+renderer.domElement.addEventListener('pointerup', ev => {
+  if (!down || Math.hypot(ev.clientX - down[0], ev.clientY - down[1]) > 6) return;
+  const id = pickUnit(ev); if (id) selectUnit(id, { fly: true });
+});
+
+/* --- loop --- */
+function resize() {
+  const w = viewport.clientWidth, h = viewport.clientHeight;
+  renderer.setSize(w, h); labelR.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(viewport); resize();
+let first = true;
+renderer.setAnimationLoop(now => {
+  if (fly) {
+    const k = Math.min(1, (now - fly.t0) / fly.dur); const e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    controls.target.lerpVectors(fly.fT, fly.tT, e); camera.position.lerpVectors(fly.fC, fly.tC, e); if (k >= 1) fly = null;
+  }
+  controls.update();
+  if (selBox.visible) selFill.material.opacity = .16 + .12 * (1 + Math.sin(now / 260)) / 2;
+  MAT.water.emissiveIntensity = .3 + .06 * Math.sin(now / 700);
+  renderer.render(scene, camera); labelR.render(scene, camera);
+  if (first) { first = false; const l = $('#loading'); l.style.opacity = 0; setTimeout(() => l.remove(), 600); setTimeout(() => $('#hint').style.opacity = 0, 9000); }
+});
+
+/* =========================================================
+   UI: KPIs, busca, painel
+   ========================================================= */
+const toastEl = $('#toast'); let toastT;
+function toast(msg) { toastEl.querySelector('span').textContent = msg; toastEl.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => toastEl.classList.remove('show'), 3200); }
+
+function renderKPIs() {
+  const occ = units.filter(u => !u.vazio).length;
+  const inadU = units.filter(u => finStatus(u) === 'Atrasado');
+  const total = inadU.reduce((a, u) => a + debt(u), 0);
+  const open = units.flatMap(openTickets); const hi = open.filter(t => t.prioridade === 'Alta').length;
+  const today = allReservas().filter(r => r.data === TODAY_ISO && r.status !== 'Cancelada');
+  const areas = [...new Set(today.map(r => r.area))];
+  $('#kpis').innerHTML = `
+    <button class="kpi" data-go="real"><div class="k"><i style="background:var(--ok)"></i>Taxa de ocupação</div><div class="v">${(occ / units.length * 100).toLocaleString('pt-BR', { maximumFractionDigits: 1 })}%</div><div class="s">${occ} de ${units.length} unidades</div></button>
+    <button class="kpi" data-go="fin"><div class="k"><i style="background:var(--bad)"></i>Inadimplência total</div><div class="v">${money(total)}</div><div class="s">${inadU.length} unidades · com multa e juros</div></button>
+    <button class="kpi" data-go="manut"><div class="k"><i style="background:var(--warn)"></i>Chamados abertos</div><div class="v">${open.length}</div><div class="s">${hi} de alta prioridade</div></button>
+    <button class="kpi" data-go="res"><div class="k"><i style="background:var(--info)"></i>Reservas do dia</div><div class="v">${today.length}</div><div class="s">${areas.length ? esc(areas.join(', ')) : 'Nenhuma reserva hoje'}</div></button>`;
+}
+$('#kpis').addEventListener('click', e => {
+  const b = e.target.closest('[data-go]'); if (!b) return;
+  if (b.dataset.go === 'res') { closeToOverview(); setTimeout(() => $('#ovRes')?.scrollIntoView({ behavior: 'smooth' }), 50); return; }
+  mode = b.dataset.go; applyMode();
+});
+
+/* busca */
+const q = $('#q'), results = $('#results'); let resIdx = 0, resList = [];
+function search(term) {
+  const t = norm(term.trim()); if (!t) return [];
+  const out = [];
+  for (const u of units) {
+    const people = [[u.owner.nome, 'Proprietário(a)'], ...(u.tenant ? [[u.tenant.nome, 'Inquilino(a)']] : []), ...u.residents.slice(1).map(r => [r.nome, r.rel])];
+    if (u.id.startsWith(t) || ('apto ' + u.id).startsWith(t)) out.push({ u, who: u.vazio ? u.vazioMotivo : (u.tenant || u.owner).nome, rel: 'Unidade', score: u.id === t ? 0 : 1 });
+    else { const p = people.find(([n]) => norm(n).includes(t)); if (p) out.push({ u, who: p[0], rel: p[1], score: 2 }); }
+  }
+  return out.sort((a, b) => a.score - b.score).slice(0, 9);
+}
+function renderResults() {
+  if (!resList.length) { results.innerHTML = q.value.trim() ? `<div class="res dim">Nenhuma unidade ou morador encontrado</div>` : ''; results.classList.toggle('open', !!q.value.trim()); return; }
+  results.innerHTML = resList.map((r, i) => `<div class="res ${i === resIdx ? 'act' : ''}" data-id="${r.u.id}"><span class="dot" style="background:${ST[unitStatus(r.u)].c}"></span><b>Apto ${r.u.id}</b><div class="n">${esc(r.who)}<small>${esc(r.rel)} · ${floorName(r.u.floor)} · ${r.u.area} m²</small></div></div>`).join('');
+  results.classList.add('open');
+}
+q.addEventListener('input', () => { resList = search(q.value); resIdx = 0; renderResults(); });
+q.addEventListener('keydown', e => {
+  if (e.key === 'ArrowDown') { resIdx = Math.min(resIdx + 1, resList.length - 1); renderResults(); e.preventDefault(); }
+  else if (e.key === 'ArrowUp') { resIdx = Math.max(resIdx - 1, 0); renderResults(); e.preventDefault(); }
+  else if (e.key === 'Enter' && resList[resIdx]) choose(resList[resIdx].u.id);
+  else if (e.key === 'Escape') { results.classList.remove('open'); q.blur(); }
+});
+results.addEventListener('mousedown', e => { const r = e.target.closest('[data-id]'); if (r) { e.preventDefault(); choose(r.dataset.id); } });
+q.addEventListener('blur', () => setTimeout(() => results.classList.remove('open'), 120));
+q.addEventListener('focus', () => { if (q.value.trim()) { resList = search(q.value); renderResults(); } });
+function choose(id) { results.classList.remove('open'); q.value = ''; q.blur(); selectUnit(id, { fly: true }); }
+
+/* menu de áreas comuns */
+$('#areasMenu').innerHTML = AREAS.map(a => {
+  const n = a.res ? allReservas().filter(r => r.area === a.res && r.data === TODAY_ISO && r.status !== 'Cancelada').length : null;
+  return `<button data-area="${a.id}"><span class="dot" style="background:var(--accent)"></span>${a.nome}<small>${n != null ? n + ' reserva(s) hoje' : a.horario}</small></button>`;
+}).join('');
+$('#areasBtn').onclick = e => { e.stopPropagation(); $('#areasDD').classList.toggle('open'); };
+$('#areasMenu').onclick = e => { const b = e.target.closest('[data-area]'); if (b) { $('#areasDD').classList.remove('open'); openArea(b.dataset.area); } };
+document.addEventListener('click', e => { if (!e.target.closest('#areasDD')) $('#areasDD').classList.remove('open'); });
+$('#modes').onclick = e => { const b = e.target.closest('[data-mode]'); if (b) { mode = b.dataset.mode; applyMode(); } };
+
+/* ---------- painel ---------- */
+const panel = $('#panel');
+let view = { kind: 'overview' }, tab = 'resumo';
+let ui = { boletoOpen: false, resOpen: false };
+function selectUnit(id, { fly: doFly = false } = {}) {
+  const u = unitMap[id]; if (!u) return;
+  if (view.kind !== 'unit' || view.id !== id) ui = { boletoOpen: false, resOpen: false };
+  view = { kind: 'unit', id }; placeAt(selBox, id);
+  if (doFly) focusUnit(u); else setFloorUI(u.floor);
+  renderPanel(); panel.scrollTop = 0;
+}
+function openArea(aid) {
+  const a = AREAS.find(x => x.id === aid); view = { kind: 'area', id: aid }; selBox.visible = false;
+  flyTo(new THREE.Vector3(...a.pos), new THREE.Vector3(...a.cam), 1.4); setFloorUI(0);
+  renderPanel(); panel.scrollTop = 0;
+}
+function closeToOverview() { view = { kind: 'overview' }; selBox.visible = false; renderPanel(); panel.scrollTop = 0; }
+function refreshAll() { renderKPIs(); applyMode(); renderPanel(); }
+function renderPanel() {
+  const st = panel.scrollTop;
+  panel.innerHTML = view.kind === 'unit' ? unitHTML(unitMap[view.id]) : view.kind === 'area' ? areaHTML(AREAS.find(a => a.id === view.id)) : overviewHTML();
+  panel.scrollTop = st;
+  if (view.kind === 'unit' && tab === 'reservas' && ui.resOpen) syncPeriodos();
+}
+
+function barChart(vals, labels, colors, { fmtV = v => v, avg = null, avgLabel = '' } = {}) {
+  const W = 320, H = 132, pl = 6, pr = 6, pt = 18, pb = 22;
+  const max = Math.max(...vals, avg || 0) * 1.15 || 1; const bw = (W - pl - pr) / vals.length;
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="chart" role="img">`;
+  vals.forEach((v, i) => { const h = (H - pt - pb) * v / max, x = pl + i * bw + bw * .2, w = bw * .6, y = H - pb - h;
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${Math.max(h, 1)}" rx="3" fill="${Array.isArray(colors) ? colors[i] : colors}"/>`;
+    s += `<text x="${x + w / 2}" y="${y - 5}">${fmtV(v)}</text><text class="cl" x="${x + w / 2}" y="${H - 7}">${labels[i]}</text>`; });
+  if (avg != null) { const y = H - pb - (H - pt - pb) * avg / max; s += `<line class="avg" x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}"/><text class="at" x="${pl}" y="${y - 4}">${avgLabel}</text>`; }
+  return s + `<line class="axis" x1="${pl}" x2="${W - pr}" y1="${H - pb}" y2="${H - pb}"/></svg>`;
+}
+const personHTML = (p, sub, tag) => `<div class="person"><div class="av" style="background:${avColor(p.nome)}">${initials(p.nome)}</div><div style="flex:1;min-width:0"><div class="nm">${esc(p.nome)} ${tag ? `<span class="tag">${tag}</span>` : ''}</div><div class="meta"><a href="tel:${p.tel.replace(/\D/g, '')}">${p.tel}</a><a href="mailto:${p.email}">${p.email}</a>${sub ? `<span>${sub}</span>` : ''}</div></div></div>`;
+
+function unitHTML(u) {
+  const st = unitStatus(u), fs = finStatus(u), ot = openTickets(u), ar = activeRes(u);
+  const head = `<div class="p-head">
+    <div class="navu"><button data-act="nav" data-d="1" title="Andar acima">↑</button><button data-act="nav" data-d="-1" title="Andar abaixo">↓</button></div>
+    <button class="x" data-act="close" title="Fechar (Esc)">✕</button>
+    <div class="eyebrow">Torre Única · ${floorName(u.floor)} · ${u.front ? 'Frente · Av. São Bento' : 'Fundos · vista lazer'}</div>
+    <h2>Apto ${u.id}<small>Planta ${u.area} m²</small></h2>
+    <div class="chips"><span class="chip">${u.dorms} dormitórios${u.suite ? ' (1 suíte)' : ''}</span><span class="chip">Terraço grill</span><span class="chip">Vaga ${u.vaga}</span>${u.pets.length ? `<span class="chip">${u.pets.length} pet${u.pets.length > 1 ? 's' : ''}</span>` : ''}</div>
+    <div class="pill" style="--c:${ST[st].c}">${ST[st].label}${u.vazio ? ' · ' + u.vazioMotivo : ''}</div>
+  </div>
+  <nav class="tabs">
+    ${[['resumo', 'Resumo e Moradores', ''], ['fin', 'Financeiro', fs === 'Atrasado' ? '<span class="cnt hot">!</span>' : ''], ['oc', 'Ocorrências', ot.length ? `<span class="cnt ${ot.some(t => t.prioridade === 'Alta') ? 'hot' : ''}">${ot.length}</span>` : ''], ['reservas', 'Reservas e Consumo', ar.length ? `<span class="cnt">${ar.length}</span>` : '']]
+      .map(([k, l, c]) => `<button data-tab="${k}" class="${tab === k ? 'on' : ''}">${l}${c}</button>`).join('')}
+  </nav>`;
+  const bodies = { resumo: tabResumo, fin: tabFin, oc: tabOc, reservas: tabRes };
+  return head + `<div class="body">${bodies[tab](u)}</div>`;
+}
+
+function tabResumo(u) {
+  let h = `<div class="card"><h3>Proprietário(a)<span class="r">${u.ownerReside ? 'Reside na unidade' : 'Não residente'}</span></h3>${personHTML(u.owner)}</div>`;
+  if (u.tenant) h += `<div class="card"><h3>Inquilino(a)<span class="r">Contrato até ${fmtD(u.contratoAte)}</span></h3>${personHTML(u.tenant, 'Administradora: Imobiliária Vila Galvão', 'Locação')}</div>`;
+  h += `<div class="card"><h3>Moradores<span class="r">${u.residents.length} pessoa${u.residents.length === 1 ? '' : 's'}</span></h3>${u.residents.length ? `<div class="list">${u.residents.map(r => `<div class="li"><div class="av" style="width:30px;height:30px;border-radius:9px;font-size:11px;background:${avColor(r.nome)}">${initials(r.nome)}</div><div class="grow"><b style="font-weight:600">${esc(r.nome)}</b><div class="sub">${r.rel}</div></div><span class="sub num">${r.idade} anos</span></div>`).join('')}</div>` : `<div class="empty">Unidade sem moradores cadastrados (${u.vazioMotivo.toLowerCase()}).</div>`}</div>`;
+  h += `<div class="card"><h3>Pets · Pet Care<span class="r">${u.pets.filter(p => p.petcare).length} cadastrado(s)</span></h3>${u.pets.length ? `<div class="list">${u.pets.map(p => { const venc = p.vacina < TODAY_ISO; return `<div class="li"><div class="grow"><b style="font-weight:600">${esc(p.nome)}</b> <span class="sub">· ${p.especie} · ${esc(p.raca)} · porte ${p.porte.toLowerCase()}</span><div class="sub" style="${venc ? 'color:var(--bad)' : ''}">Antirrábica ${venc ? 'vencida em' : 'válida até'} ${fmtD(p.vacina)}</div></div>${p.petcare ? `<span class="badge" style="--c:var(--ok)">${p.petcare}</span>` : `<span class="badge" style="--c:var(--pend)">Sem cadastro</span>`}</div>`; }).join('')}</div>` : '<div class="empty">Nenhum pet cadastrado.</div>'}</div>`;
+  h += `<div class="card"><h3>Veículo e garagem<span class="r">Vaga ${u.vaga} · ${u.vaga.startsWith('G1') ? '1º' : '2º'} subsolo</span></h3>${u.vehicle ? `<div class="row" style="gap:14px"><div class="plate"><span>BRASIL</span><b>${u.vehicle.placa.slice(0, 3)}${u.vehicle.placa.slice(3)}</b></div><div><div style="font-weight:600">${u.vehicle.modelo}</div><div class="sub dim" style="font-size:12.5px">${u.vehicle.cor} · ${u.vehicle.ano} · TAG ativa</div></div></div>` : '<div class="empty">Nenhum veículo cadastrado — vaga livre.</div>'}</div>`;
+  return h;
+}
+
+function tabFin(u) {
+  const fs = finStatus(u), d = debt(u), last = u.bills[u.bills.length - 1];
+  const open = u.bills.filter(b => !b.pagoEm);
+  const next = u.bills.filter(b => billStatus(b) === 'Pendente').sort((a, b) => a.venc.localeCompare(b.venc))[0];
+  const cMap = { Pago: 'var(--ok)', Pendente: 'var(--pend)', Atrasado: 'var(--bad)' };
+  let h = `<div class="card"><h3>Taxa condominial<span class="r">Vencimento todo dia 10</span></h3>
+    <div class="row" style="justify-content:space-between;align-items:flex-end">
+      <div><span class="badge" style="--c:${cMap[fs]};font-size:12px">${fs === 'Pago' ? 'Pago · em dia' : fs}</span><div class="big" style="margin-top:6px;color:${fs === 'Atrasado' ? 'var(--bad)' : 'inherit'}">${fs === 'Atrasado' ? money(d) : money(next ? next.valor : last.valor)}</div>
+      <div class="dim" style="font-size:12px">${fs === 'Atrasado' ? `em aberto · ${open.filter(b => billStatus(b) === 'Atrasado').length} boleto(s) vencido(s), com multa 2% + juros 1% a.m.` : next ? `próximo boleto · competência ${next.label} · vence ${fmtD(next.venc)}` : 'todos os boletos quitados'}</div></div>
+    </div>
+    ${fs === 'Atrasado' ? `<div class="alert" style="--c:var(--bad);margin-top:12px"><span>⚠</span><div><b>Unidade inadimplente.</b> Débito superior a ${monthsLate(open.find(b => billStatus(b) === 'Atrasado'))} mês(es). Avalie envio de notificação extrajudicial ou proposta de acordo.</div></div>` : ''}
+  </div>`;
+  h += `<div class="card"><h3>Últimos 6 meses</h3>${barChart(u.bills.map(b => b.valor), u.bills.map(b => b.label), u.bills.map(b => FIN_C[billStatus(b)]), { fmtV: v => 'R$ ' + Math.round(v) })}
+    <table style="margin-top:8px"><thead><tr><th>Competência</th><th>Vencimento</th><th class="r">Valor</th><th class="r">Status</th></tr></thead><tbody>
+    ${u.bills.slice().reverse().map(b => { const s = billStatus(b); const late = b.pagoEm && b.pagoEm > b.venc; return `<tr><td>${b.label}</td><td class="num">${fmtD(b.venc)}</td><td class="r num">${money(s === 'Atrasado' ? billUpdated(b) : b.valor)}</td><td class="r"><span class="badge" style="--c:${cMap[s]}">${s}${b.pagoEm ? ' ' + fmtD(b.pagoEm).slice(0, 5) : ''}${late ? ' · c/ atraso' : ''}</span></td></tr>`; }).join('')}
+    </tbody></table></div>`;
+  h += `<div class="card"><h3>Composição · ${last.label}</h3><table><tbody>
+    <tr><td>Taxa ordinária (${u.area} m² × R$ 11,60)</td><td class="r num">${money(last.ordinaria)}</td></tr>
+    <tr><td>Fundo de reserva (5%)</td><td class="r num">${money(last.fundo)}</td></tr>
+    <tr><td>Água individualizada (${String(u.agua[5]).replace('.', ',')} m³)</td><td class="r num">${money(last.agua)}</td></tr>
+    <tr><td>Gás individualizado (${String(u.gas[5]).replace('.', ',')} m³)</td><td class="r num">${money(last.gas)}</td></tr>
+    <tr><td><b>Total</b></td><td class="r num"><b>${money(last.valor)}</b></td></tr></tbody></table></div>`;
+  const destino = u.tenant || u.owner;
+  h += `<div class="card"><h3>Boletos</h3>
+    ${ui.boletoOpen ? `<form data-form="boleto" style="display:flex;flex-direction:column;gap:10px">
+      <label class="fld">Competência<select name="comp">${(open.length ? open : [last]).map(b => `<option value="${b.comp}">${b.label} · ${money(billStatus(b) === 'Atrasado' ? billUpdated(b) : b.valor)} · ${billStatus(b)}</option>`).join('')}</select></label>
+      <label class="chk"><input type="checkbox" name="email" checked> E-mail · ${esc(destino.email)}</label>
+      <label class="chk"><input type="checkbox" name="whats" checked> WhatsApp · ${destino.tel}</label>
+      <div class="row"><button class="btn pri" type="submit">Enviar 2ª via</button><button class="btn" type="button" data-act="boletoClose">Cancelar</button></div></form>`
+      : `<div class="row"><button class="btn pri" data-act="boletoOpen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>Enviar 2ª via do boleto</button><button class="btn" data-act="copyLine">Copiar linha digitável</button></div>`}
+    ${u.boletos.length ? `<div class="list" style="margin-top:12px">${u.boletos.slice().reverse().map(b => `<div class="li"><div class="grow"><b style="font-weight:600">2ª via enviada</b> <span class="sub">· competência ${u.bills.find(x => x.comp === b.comp)?.label || b.comp}</span><div class="sub">${b.canais.join(' + ')} · ${fmtDT(b.data)}</div></div><span class="badge" style="--c:var(--ok)">Enviado</span></div>`).join('')}</div>` : ''}
+  </div>`;
+  return h;
+}
+
+function tabOc(u) {
+  const ot = openTickets(u);
+  let h = `<div class="grid2"><div class="card stat"><div class="k">Abertos / em andamento</div><div class="v">${ot.length}</div></div><div class="card stat"><div class="k">Concluídos</div><div class="v">${u.tickets.length - ot.length}</div></div></div>`;
+  const sorted = u.tickets.slice().sort((a, b) => (a.status === 'Concluído') - (b.status === 'Concluído') || b.aberto.localeCompare(a.aberto));
+  h += sorted.length ? sorted.map(t => `<div class="ticket"><div class="t1"><b>${esc(t.titulo)}</b><span class="badge" style="--c:${TK_C[t.status]}">${t.status}</span></div>
+      <div class="meta">${t.id} · ${esc(t.categoria)} · aberto em ${fmtD(t.aberto)} · <span style="color:${PR_C[t.prioridade]}">prioridade ${t.prioridade.toLowerCase()}</span></div>
+      <p>${esc(t.desc)}</p>
+      <div class="notes">${t.notas.map(n => `<div class="note ${n.autor === 'Síndico' ? 'sind' : ''}"><small>${esc(n.autor)} · ${fmtDT(n.data)}</small>${esc(n.texto)}</div>`).join('')}</div></div>`).join('')
+    : `<div class="card empty">Nenhum chamado registrado para esta unidade.</div>`;
+  h += `<div class="card"><h3>Registrar anotação do síndico</h3>
+    <form data-form="note" style="display:flex;flex-direction:column;gap:10px">
+      <label class="fld">Vincular a<select name="ticket" data-act="ticketSel">${u.tickets.filter(t => t.status !== 'Concluído').map(t => `<option value="${t.id}">${t.id} · ${esc(t.titulo)}</option>`).join('')}<option value="__new">+ Abrir novo chamado</option>${u.tickets.filter(t => t.status === 'Concluído').map(t => `<option value="${t.id}">${t.id} · ${esc(t.titulo)} (concluído)</option>`).join('')}</select></label>
+      <div data-newfields class="row" style="${ot.length ? 'display:none' : ''}">
+        <label class="fld" style="flex-basis:100%">Título<input name="titulo" placeholder="Ex.: Instalação de envidraçamento de sacada" maxlength="90"></label>
+        <label class="fld">Categoria<select name="categoria">${Object.keys(TICKET_TPL).concat('Outros').map(c => `<option>${c}</option>`).join('')}</select></label>
+        <label class="fld">Prioridade<select name="prioridade"><option>Baixa</option><option selected>Média</option><option>Alta</option></select></label>
+      </div>
+      <label class="fld">Anotação<textarea name="texto" placeholder="Ex.: Vistoria realizada; morador ciente do prazo de 15 dias para adequação." maxlength="600"></textarea></label>
+      <div class="row"><label class="fld" style="max-width:200px">Status<select name="status"><option value="">Manter status</option><option>Aberto</option><option>Em andamento</option><option>Concluído</option></select></label>
+      <button class="btn pri" type="submit" style="align-self:flex-end">Salvar anotação</button></div>
+    </form></div>`;
+  return h;
+}
+
+function tabRes(u) {
+  const ar = activeRes(u), past = u.reservas.filter(r => r.data < TODAY_ISO || r.status === 'Cancelada');
+  let h = `<div class="card"><h3>Reservas ativas<span class="r">${ar.length}</span></h3>${ar.length ? `<div class="list">${ar.map(r => `<div class="li"><div class="grow"><b style="font-weight:600">${r.area}</b>${r.data === TODAY_ISO ? ' <span class="badge" style="--c:var(--info)">Hoje</span>' : ''}<div class="sub">${fmtD(r.data)} · ${r.periodo}${r.convidados ? ` · ${r.convidados} convidados` : ''}</div></div><span class="badge" style="--c:${RS_C[r.status]}">${r.status}</span><button class="btn sm" data-act="cancelRes" data-rid="${r.id}" title="Cancelar reserva">✕</button></div>`).join('')}</div>` : '<div class="empty">Nenhuma reserva ativa.</div>'}
+    ${past.length ? `<div class="dim" style="font-size:12px;margin-top:10px">Histórico: ${past.map(r => `${r.area} (${fmtD(r.data)}${r.status === 'Cancelada' ? ', cancelada' : ''})`).join(' · ')}</div>` : ''}
+    ${u.vazio ? '' : ui.resOpen ? `<form data-form="res" style="display:flex;flex-direction:column;gap:10px;margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+      <div class="row"><label class="fld">Área<select name="area" data-act="areaSel">${Object.keys(RES_AREAS).map(a => `<option>${a}</option>`).join('')}</select></label>
+      <label class="fld">Data<input type="date" name="data" min="${TODAY_ISO}" value="${TODAY_ISO}" required></label></div>
+      <div class="row"><label class="fld">Período<select name="periodo"></select></label><label class="fld" style="max-width:120px">Convidados<input type="number" name="conv" min="0" max="60" value="0"></label></div>
+      <div class="row"><button class="btn pri" type="submit">Confirmar reserva</button><button class="btn" type="button" data-act="resClose">Cancelar</button></div></form>`
+    : `<div class="row" style="margin-top:12px"><button class="btn" data-act="resOpen">+ Nova reserva</button></div>`}
+  </div>`;
+  const occ = units.filter(x => !x.vazio);
+  const avgA = occ.reduce((a, x) => a + x.agua[5], 0) / occ.length, avgG = occ.reduce((a, x) => a + x.gas[5], 0) / occ.length;
+  const labels = u.bills.map(b => b.label.slice(0, 3));
+  const fmt1 = v => v.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+  const delta = (arr, avg) => { const p = (arr[5] / avg - 1) * 100; return `<span style="color:${p > 15 ? 'var(--bad)' : p < -15 ? 'var(--ok)' : 'var(--muted)'}">${p > 0 ? '+' : ''}${Math.round(p)}% vs. média</span>`; };
+  h += `<div class="card"><h3>Água · leitura mensal (m³)<span class="r">${delta(u.agua, avgA)}</span></h3>${barChart(u.agua, labels, '#38bdf8', { fmtV: fmt1, avg: avgA, avgLabel: 'média ' + fmt1(avgA) })}</div>`;
+  h += `<div class="card"><h3>Gás · leitura mensal (m³)<span class="r">${delta(u.gas, avgG)}</span></h3>${barChart(u.gas, labels, '#f2a273', { fmtV: fmt1, avg: avgG, avgLabel: 'média ' + fmt1(avgG) })}</div>`;
+  return h;
+}
+function syncPeriodos() {
+  const f = panel.querySelector('[data-form="res"]'); if (!f) return;
+  f.periodo.innerHTML = RES_AREAS[f.area.value].periodos.map(p => `<option>${p}</option>`).join('');
+}
+
+function areaHTML(a) {
+  const rs = a.res ? allReservas().filter(r => r.area === a.res && r.data >= TODAY_ISO && r.status !== 'Cancelada').sort((x, y) => x.data.localeCompare(y.data)) : [];
+  const hoje = rs.filter(r => r.data === TODAY_ISO);
+  let h = `<div class="p-head"><button class="x" data-act="close" title="Fechar">✕</button><div class="eyebrow">Área comum · ${a.local}</div><h2>${a.nome}</h2>
+    <div class="chips"><span class="chip">${a.horario}</span><span class="chip">${a.cap}</span>${a.res ? `<span class="chip">Reservável${RES_AREAS[a.res].taxa ? ' · ' + money(RES_AREAS[a.res].taxa) : ' · sem taxa'}</span>` : '<span class="chip">Uso livre</span>'}</div>
+    <div class="pill" style="--c:${hoje.length ? 'var(--info)' : 'var(--ok)'}">${hoje.length ? `${hoje.length} reserva(s) hoje` : 'Disponível hoje'}</div></div><div class="body">`;
+  h += `<div class="card"><h3>Sobre</h3><div style="font-size:13px;color:#c9d2de">${a.desc}</div></div>`;
+  if (a.extra) h += `<div class="card"><h3>${a.id === 'piscina' ? 'Qualidade da água' : 'Controle Pet Care'}</h3>${a.extra()}</div>`;
+  if (a.res) h += `<div class="card"><h3>Próximas reservas<span class="r">${rs.length}</span></h3>${rs.length ? `<div class="list">${rs.slice(0, 12).map(r => `<div class="li clk" data-unit="${r.unit}"><div class="grow"><b style="font-weight:600">${r.data === TODAY_ISO ? 'Hoje' : fmtD(r.data)}</b> <span class="sub">· ${r.periodo}</span><div class="sub">${esc((unitMap[r.unit].tenant || unitMap[r.unit].owner).nome)}${r.convidados ? ` · ${r.convidados} convidados` : ''}</div></div><span class="badge" style="--c:${RS_C[r.status]}">${r.status}</span><span class="tag">Apto ${r.unit}</span></div>`).join('')}</div>` : '<div class="empty">Sem reservas futuras.</div>'}</div>`;
+  h += `<div class="card"><h3>Regras de uso</h3><div class="list">${a.regras.map(r => `<div class="li"><span class="dot" style="background:var(--accent)"></span><div class="grow">${r}</div></div>`).join('')}</div></div>`;
+  return h + `<button class="btn" data-act="close">← Voltar à visão geral</button></div>`;
+}
+
+function overviewHTML() {
+  const c = { ok: 0, inad: 0, manut: 0, vazio: 0 }; units.forEach(u => c[unitStatus(u)]++);
+  const devedores = units.filter(u => finStatus(u) === 'Atrasado').sort((a, b) => debt(b) - debt(a));
+  const pr = { 'Alta': 0, 'Média': 1, 'Baixa': 2 };
+  const tks = units.flatMap(u => openTickets(u).map(t => ({ ...t, unit: u.id }))).sort((a, b) => pr[a.prioridade] - pr[b.prioridade] || a.aberto.localeCompare(b.aberto));
+  const hoje = allReservas().filter(r => r.data === TODAY_ISO && r.status !== 'Cancelada');
+  const recebido = units.reduce((a, u) => a + u.bills.filter(b => b.pagoEm && b.pagoEm.slice(0, 7) === TODAY_ISO.slice(0, 7)).reduce((x, b) => x + b.valor, 0), 0);
+  return `<div class="p-head"><div class="eyebrow">Visão geral · ${TODAY.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}</div><h2>Torre Única</h2>
+    <div class="chips"><span class="chip">${FLOORS} andares</span><span class="chip">${PER_FLOOR} aptos por andar</span><span class="chip">${units.length} unidades</span><span class="chip">Plantas 45–52 m²</span><span class="chip">Portaria 24h</span></div></div>
+  <div class="body">
+    <div class="card"><h3>Status das unidades</h3>
+      <div class="stack">${Object.entries(c).map(([k, n]) => `<div style="flex:${n};background:${ST[k].c}" title="${ST[k].label}: ${n}"></div>`).join('')}</div>
+      <div class="grid2">${Object.entries(c).map(([k, n]) => `<div class="row" style="gap:8px;font-size:12.5px;flex-wrap:nowrap;white-space:nowrap"><span class="dot" style="background:${ST[k].c}"></span>${ST[k].label}<b class="num" style="margin-left:auto">${n}</b></div>`).join('')}</div>
+      <div class="dim" style="font-size:12px;margin-top:10px">Clique em uma varanda no modelo 3D ou busque pelo número do apartamento.</div></div>
+    <div class="grid2"><div class="card stat"><div class="k">Recebido no mês</div><div class="v">${money(recebido)}</div></div><div class="card stat"><div class="k">Pets cadastrados</div><div class="v">${units.reduce((a, u) => a + u.pets.length, 0)}</div></div></div>
+    <div class="card"><h3>Maiores débitos<span class="r">${devedores.length} unidades</span></h3><div class="list">${devedores.slice(0, 6).map(u => `<div class="li clk" data-unit="${u.id}"><div class="grow"><b>Apto ${u.id}</b> <span class="sub">· ${esc((u.tenant || u.owner).nome)}</span><div class="sub">${u.bills.filter(b => billStatus(b) === 'Atrasado').length} boleto(s) em atraso</div></div><b class="num" style="color:var(--bad)">${money(debt(u))}</b></div>`).join('')}</div></div>
+    <div class="card"><h3>Chamados em aberto<span class="r">${tks.length}</span></h3><div class="list">${tks.slice(0, 7).map(t => `<div class="li clk" data-unit="${t.unit}" data-tab2="oc"><span class="dot" style="background:${PR_C[t.prioridade]}"></span><div class="grow"><b style="font-weight:600">${esc(t.titulo)}</b><div class="sub">Apto ${t.unit} · ${t.status} · desde ${fmtD(t.aberto)}</div></div></div>`).join('')}</div></div>
+    <div class="card" id="ovRes"><h3>Reservas de hoje<span class="r">${hoje.length}</span></h3>${hoje.length ? `<div class="list">${hoje.map(r => `<div class="li clk" data-unit="${r.unit}" data-tab2="reservas"><div class="grow"><b style="font-weight:600">${r.area}</b><div class="sub">${r.periodo}${r.convidados ? ` · ${r.convidados} convidados` : ''}</div></div><span class="tag">Apto ${r.unit}</span></div>`).join('')}</div>` : '<div class="empty">Nenhuma reserva para hoje.</div>'}</div>
+    <div class="dim" style="font-size:11.5px">Dados fictícios de demonstração. Alterações ficam salvas neste navegador. <button class="linkbtn" data-act="reset">Restaurar dados originais</button></div>
+  </div>`;
+}
+
+/* ---------- eventos do painel ---------- */
+panel.addEventListener('click', e => {
+  const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; renderPanel(); return; }
+  const lu = e.target.closest('[data-unit]'); if (lu) { if (lu.dataset.tab2) tab = lu.dataset.tab2; selectUnit(lu.dataset.unit, { fly: true }); return; }
+  const a = e.target.closest('[data-act]'); if (!a) return;
+  const act = a.dataset.act, u = view.kind === 'unit' ? unitMap[view.id] : null;
+  if (act === 'close') closeToOverview();
+  else if (act === 'nav' && u) { const f = u.floor + +a.dataset.d; if (f >= 1 && f <= FLOORS) selectUnit(`${f}${u.pos}`, { fly: true }); }
+  else if (act === 'boletoOpen') { ui.boletoOpen = true; renderPanel(); }
+  else if (act === 'boletoClose') { ui.boletoOpen = false; renderPanel(); }
+  else if (act === 'resOpen') { ui.resOpen = true; renderPanel(); }
+  else if (act === 'resClose') { ui.resOpen = false; renderPanel(); }
+  else if (act === 'copyLine' && u) {
+    const b = u.bills.find(x => !x.pagoEm) || u.bills[u.bills.length - 1];
+    const digits = `03399.${u.id.padStart(5, '0')} 10689.${b.comp.replace(/-/g, '').slice(0, 6)}${pad(u.floor)}7 ${String(Math.round(b.valor * 100)).padStart(5, '0')}.10168 9 ${String(Math.round(b.valor * 100)).padStart(14, '0')}`;
+    (navigator.clipboard?.writeText(digits) || Promise.reject()).then(() => toast('Linha digitável copiada'), () => toast(digits));
+  }
+  else if ((act === 'cancelRes' || act === 'reset') && !a.dataset.armed) {
+    a.dataset.armed = '1'; const old = a.textContent;
+    a.textContent = act === 'reset' ? 'Clique de novo para apagar anotações, reservas e envios' : 'Confirmar cancelamento';
+    setTimeout(() => { if (a.isConnected) { delete a.dataset.armed; a.textContent = old; } }, 3500);
+  }
+  else if (act === 'cancelRes' && u) { commit({ t: 'cancelReserva', unit: u.id, rid: a.dataset.rid }); toast('Reserva cancelada'); }
+  else if (act === 'reset') { { events = []; save(); units = generate(); unitMap = Object.fromEntries(units.map(x => [x.id, x])); closeToOverview(); refreshAll(); toast('Dados restaurados'); } }
+});
+panel.addEventListener('change', e => {
+  if (e.target.dataset.act === 'ticketSel') { const nf = panel.querySelector('[data-newfields]'); nf.style.display = e.target.value === '__new' ? '' : 'none'; }
+  if (e.target.dataset.act === 'areaSel') syncPeriodos();
+});
+panel.addEventListener('submit', e => {
+  e.preventDefault(); const f = e.target, u = unitMap[view.id]; if (!u) return;
+  const now = new Date().toISOString();
+  if (f.dataset.form === 'boleto') {
+    const canais = [f.email.checked && 'E-mail', f.whats.checked && 'WhatsApp'].filter(Boolean);
+    if (!canais.length) return toast('Selecione ao menos um canal');
+    ui.boletoOpen = false; commit({ t: 'boleto', unit: u.id, comp: f.comp.value, canais, data: now });
+    toast(`2ª via enviada por ${canais.join(' e ')} para ${(u.tenant || u.owner).nome.split(' ')[0]}`);
+  } else if (f.dataset.form === 'note') {
+    const texto = f.texto.value.trim(), status = f.status.value;
+    if (f.ticket.value === '__new') {
+      const titulo = f.titulo.value.trim(); if (!titulo) return toast('Informe o título do chamado');
+      const ticket = { id: `CH-${TODAY.getFullYear()}-N${Date.now().toString().slice(-5)}`, titulo, categoria: f.categoria.value, desc: texto || 'Chamado aberto pelo síndico.', prioridade: f.prioridade.value,
+        status: status || 'Aberto', aberto: TODAY_ISO, notas: [{ data: now, autor: 'Síndico', texto: 'Chamado aberto pelo síndico.' }] };
+      commit({ t: 'ticket', unit: u.id, ticket }); toast(`Chamado ${ticket.id} aberto`);
+    } else {
+      if (!texto && !status) return toast('Escreva uma anotação ou altere o status');
+      commit({ t: 'note', unit: u.id, ticket: f.ticket.value, texto, status, data: now }); toast('Anotação registrada');
+    }
+  } else if (f.dataset.form === 'res') {
+    const area = f.area.value, data = f.data.value, periodo = f.periodo.value;
+    if (!data || data < TODAY_ISO) return toast('Escolha uma data a partir de hoje');
+    const clash = allReservas().find(r => r.area === area && r.data === data && r.periodo === periodo && r.status !== 'Cancelada');
+    if (clash) return toast(`Indisponível: já reservado pelo apto ${clash.unit}`);
+    ui.resOpen = false;
+    commit({ t: 'reserva', unit: u.id, reserva: { id: `R-N${Date.now().toString().slice(-6)}`, area, data, periodo, convidados: +f.conv.value || 0, status: RES_AREAS[area].taxa ? 'Aguardando pagamento' : 'Confirmada' } });
+    toast(`Reserva de ${area} registrada para ${fmtD(data)}`);
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && view.kind !== 'overview' && !e.target.closest('input,textarea,select')) closeToOverview();
+  if (e.key === '/' && !e.target.closest('input,textarea,select')) { e.preventDefault(); q.focus(); }
+});
+
+renderKPIs(); applyMode(); renderPanel();
+</script>
